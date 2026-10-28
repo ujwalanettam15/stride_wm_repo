@@ -1,0 +1,19 @@
+# Python 3.11/3.12 recommended (labmaze, a dm_control dependency, has no 3.13 wheel; on 3.13 install
+# dm_control/ogbench/stable-worldmodel with --no-deps, then the rest of this file)
+torch>=2.5
+torchvision
+stable-worldmodel @ git+https://github.com/galilai-group/stable-worldmodel@21446f1ede6d5284e981bd7b47f432b994e6d812
+ogbench==1.2.1
+mujoco>=3.1.6
+dm_control
+gymnasium
+transformers
+h5py
+hdf5plugin
+hydra-core
+pygame
+pymunk
+shapely
+pandas
+matplotlib
+pytest

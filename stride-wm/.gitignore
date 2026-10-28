@@ -1,0 +1,30 @@
+# Virtualenv
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# Datasets and caches (regenerate locally; too large for git)
+data/
+data_probe50/*
+!data_probe50/cache/
+data_probe50/cache/*
+!data_probe50/cache/encoder.json
+!data_probe50/cache/phase_thresholds.json
+
+# Training runs / checkpoints
+runs/
+runs_probe50/
+logs/
+
+# Large artifact types
+*.h5
+*.npy
+*.npz
+*.pt
