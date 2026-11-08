@@ -24,7 +24,8 @@ def encode(enc, pixels, pool=1):
     if x.shape[-1] != 224:
         x = F.interpolate(x, size=(224, 224), mode='bilinear', antialias=True)
     x = ((x - MEAN) / STD).to(next(enc.parameters()).device)
-    t = enc(pixel_values=x).last_hidden_state[:, 1:]
+    # .contiguous(): on MPS (torch 2.7.1, macOS 14) avg_pool2d of this sliced view returns wrong values
+    t = enc(pixel_values=x).last_hidden_state[:, 1:].contiguous()
     if pool > 1:
         n, p, d = t.shape
         g = int(p ** 0.5)
