@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # CPU-scale pilot (2 cores, no GPU): exactly what produced results/ for the checkpoint.
 # Full-scale settings are the script defaults; see README.
+# Planning numbers in results_cpu_pilot/ predate three eval_plan.py changes (candidate clipping, goal =
+# horizon, min start distance); the flags below reproduce the last two, not the clipping.
 set -euo pipefail
 cd "$(dirname "$0")"
 ENC=${ENC:-data/dinov2-small}   # local copy of facebook/dinov2-small (or the HF id)
@@ -17,5 +19,6 @@ done
 
 python scripts/eval_openloop.py --cache data/cache --ckpts runs/*.pt --horizon 40 --every 2
 python scripts/eval_plan.py --cache data/cache --ckpts runs/*.pt --offsets 25 --pairs 6 \
-  --samples 64 --iters 5 --topk 8 --horizon 40 --replan 8 --fast-render
+  --samples 64 --iters 5 --topk 8 --horizon 40 --replan 8 --fast-render \
+  --offsets 25 --allow-misaligned --min-start-cm 4   # the pilot's settings; misaligned goal, see README
 python scripts/report.py

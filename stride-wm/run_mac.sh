@@ -19,6 +19,7 @@ done
 
 python scripts/eval_openloop.py --ckpts runs/*.pt --horizon 80 --every 2
 # planning is the slow part (k=1 makes 8x the model calls of k=8): seed 0, reduced CEM budget
-python scripts/eval_plan.py --ckpts replay runs/*_s0.pt --offsets 25,50,100 --pairs 10 \
+# goal offset = horizon (eval_plan.py default); 'random' is the null planner each success rate must beat
+python scripts/eval_plan.py --ckpts replay random runs/*_s0.pt --horizon 40 --pairs 10 \
   --samples 100 --iters 10 --topk 10
 python scripts/report.py

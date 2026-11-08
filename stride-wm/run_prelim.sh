@@ -30,5 +30,6 @@ python scripts/report.py
 # the near offset, ~25-35 min (extrapolated from 6 min for one k=1 episode at the 22M model size;
 # cost scales as H/k and roughly with model size). Run it once E1 looks sane:
 #   python scripts/eval_plan.py --ckpts replay runs/*_s0.pt --offsets 25 --pairs 5 \
-#     --samples 100 --iters 10 --topk 10 --horizon 40 --replan 8
+#     --samples 100 --iters 10 --topk 10 --horizon 40 --replan 8 --allow-misaligned --min-start-cm 4
+# (flags reproduce results/plan.jsonl except candidate clipping; for new runs use run_ablations.sh)
 #   python scripts/report.py

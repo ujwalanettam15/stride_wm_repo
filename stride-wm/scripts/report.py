@@ -3,11 +3,15 @@ Strides are compared only at depths they share: multiples of 8 for k in {1,2,4,8
 of 5 for k=5 vs the DINO-WM baseline, multiples of 40 for everything."""
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import matplotlib
 import pandas as pd
 import torch
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from stride.stats import wilson
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -19,6 +23,7 @@ p.add_argument('--runs', default='runs')
 p.add_argument('--out', default='results')
 args = p.parse_args()
 out = Path(args.out)
+out.mkdir(parents=True, exist_ok=True)
 PHASES = ['reach', 'grasp', 'transport', 'place']
 RAMP = {1: '#86b6ef', 2: '#5598e7', 4: '#2a78d6', 5: '#1c5cab', 8: '#0d366b'}  # ordinal blue
 BASE, REF, INK, MUTED, GRID = '#eb6834', '#898781', '#0b0b0b', '#52514e', '#e1e0d9'
@@ -36,7 +41,7 @@ def fmt(v, se=None, nd=3):
 
 
 def cell(col, nd):
-    """One seed: mean ± s.e. over prediction samples. Several seeds: mean ± s.d. over seeds (†)."""
+    """One seed: mean ± s.e. over held-out episodes (clustered). Several seeds: mean ± s.d. over seeds (†)."""
     def f(g):
         if not len(g) or g[col].isna().all():
             return '—'
@@ -65,8 +70,12 @@ for f in sorted(Path(args.runs).glob('*.pt')):
               f"{last['val_copy']:.4f} | {ck['chunk_nn']:.3f} |\n")
 md.append('\n')
 d = pd.read_csv(args.openloop)
-d['label'] = d.apply(lambda r: f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}" if r.k else r.model, axis=1)
-prop, base = d[d.arch == 'chunk'], d[d.arch == 'dinowm']
+d['variant'] = d['variant'].fillna('') if 'variant' in d else ''  # older csvs predate ablation variants
+d['label'] = d.apply(lambda r: f"{'DINO-WM' if r.arch.startswith('dinowm') else 'chunk'} k={r.k}{r.variant}"
+                     f"{' (shuffled actions)' if r.arch.endswith('-shuf') else ''}" if r.k else r.model, axis=1)
+# headline tables use default-setting models only; ablation variants and controls get their own tables
+main = d[d.variant == '']
+prop, base = main[main.arch == 'chunk'], main[main.arch == 'dinowm']
 ref = d[d.model == 'copy_last']
 order = sorted(prop.k.unique())
 
@@ -75,7 +84,7 @@ alld = pd.concat([prop, base, ref])
 alld = alld[alld.phase == 'all']
 depths = pd.Index([8, 16, 24, 32, 40], name='depth')
 md.append('## E1 · open-loop latent MSE by rollout depth (env steps), all phases\n')
-md.append('± = s.e. over prediction samples (one seed); † = s.d. over training seeds\n\n')
+md.append('± = s.e. over held-out episodes (one seed; episode = unit of replication); † = s.d. over training seeds\n\n')
 md.append(table(alld, ['label'], depths, cell('mse', 4)))
 md.append('\n## E1 · probe-decoded error at depth 40 (cube / end-effector position, cm)\n')
 d40 = alld[alld.depth == 40]
@@ -108,6 +117,34 @@ e4 = e4[e4.phase == 'all']
 md.append('\n## E4 · DINO-WM conditioning vs chunk encoder, k=5 (latent MSE)\n')
 md.append(table(e4, ['label'], pd.Index([5, 10, 20, 40], name='depth'),
                 cell('mse', 4)))
+
+# ---- action sensitivity: same rollouts with another sample's actions (eval_openloop.py --shuffle-actions)
+shuf = d[d.arch.str.endswith('-shuf') & (d.phase == 'all')]
+if len(shuf):
+    md.append('\n## Action sensitivity · latent MSE with true vs shuffled actions (all phases)\n')
+    md.append('If shuffling barely changes the error the model is not using its actions.\n\n')
+    md.append('| model | depth | true actions | shuffled actions | ratio |\n|---|---|---|---|---|\n')
+    for (name, dep), g in shuf.groupby(['model', 'depth']):
+        if dep not in (8, 40):
+            continue
+        t = main[(main.model == name.removesuffix('_shuf')) & (main.depth == dep) & (main.phase == 'all')]
+        if len(t):
+            md.append(f'| {name.removesuffix("_shuf")} | {dep} | {t.mse.iloc[0]:.4f} | {g.mse.iloc[0]:.4f} | '
+                      f'{g.mse.iloc[0] / t.mse.iloc[0]:.2f} |\n')
+
+# ---- ablations: variant models next to the matching default models
+abl = d[(d.variant != '') & ~d.arch.str.endswith('-shuf') & (d.phase == 'all') & (d.k > 0)]
+if len(abl):
+    ks = sorted(abl.k.unique())
+    both = pd.concat([abl, main[(main.phase == 'all') & main.k.isin(ks) & main.arch.isin(['chunk', 'dinowm'])]])
+    md.append('\n## Ablations · latent MSE by rollout depth, variants vs default (all phases)\n')
+    md.append('-res = residual prediction; -uN = N chained steps in the training loss; -eN = DINO-WM embedding '
+              'width; -embN = chunk-encoder width. Compare each variant to the default row of the same k.\n\n')
+    md.append(table(both.sort_values(['k', 'variant']), ['label'], depths, cell('mse', 4)))
+    md.append('\n| model | cube cm @40 (Reach) | cube cm @40 (all) |\n|---|---|---|\n')
+    for lab, g in both[both.depth == 40].groupby('label', sort=False):
+        reach = d[(d.label == lab) & (d.depth == 40) & (d.phase == 'reach')]
+        md.append(f'| {lab} | {cell("cube_cm", 2)(reach)} | {cell("cube_cm", 2)(g)} |\n')
 
 # ---- figures
 fig, ax = plt.subplots(1, 3, figsize=(13, 3.6), constrained_layout=True)
@@ -160,18 +197,34 @@ fig.savefig(out / 'fig_e1_phase.png', dpi=160)
 # ---- E2/E3 planning
 if Path(args.plan).exists():
     pl = pd.DataFrame([json.loads(x) for x in open(args.plan)])
-    pl['label'] = pl.apply(lambda r: 'expert replay (pipeline check)' if r.arch == 'replay' else
-                           f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}", axis=1)
-    md.append('\n## E2 · planning success rate by goal offset (env steps)\n')
-    g = pl.groupby(['label', 'offset']).success.agg(['mean', 'count']).reset_index()
+    if 'variant' not in pl:
+        pl['variant'] = ''
+    pl['variant'] = pl['variant'].fillna('')
+    NULL = {'replay': 'expert replay (pipeline check)', 'random': 'random actions (null planner)'}
+    pl['label'] = pl.apply(lambda r: NULL.get(r.arch) or
+                           f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}{r.variant}", axis=1)
+    pl['progress'] = pl.start_dist_cm - pl.final_dist_cm
+    md.append('\n## E2 · planning success by goal offset (env steps): rate [95% Wilson interval] (pairs)\n')
+    md.append('A rate only means something next to the random-action row and its interval; with n < 20 '
+              'pairs the intervals overlap for almost any two models.\n\n')
     offs = sorted(pl.offset.unique())
     md.append('| model | ' + ' | '.join(f'd={o}' for o in offs) + ' |\n' + '|---' * (len(offs) + 1) + '|\n')
-    for lab, gg in g.groupby('label', sort=False):
-        cells = [f"{100 * r['mean']:.0f}% ({int(r['count'])})" for _, r in gg.set_index('offset').reindex(offs).iterrows()]
+    for lab, gg in pl.groupby('label', sort=False):
+        cells = []
+        for o in offs:
+            g = gg[gg.offset == o]
+            lo, hi = wilson(int(g.success.sum()), len(g))
+            cells.append(f"{100 * g.success.mean():.0f}% [{100 * lo:.0f}-{100 * hi:.0f}] ({len(g)})" if len(g) else '—')
         md.append(f'| {lab} | ' + ' | '.join(cells) + ' |\n')
+    md.append('\n## E2 · progress toward the goal (cm; start distance minus final / closest distance)\n')
+    md.append('| model | start | final | closest | progress (final) | progress (closest) | pairs |\n|---|---|---|---|---|---|---|\n')
+    for lab, gg in pl.groupby('label', sort=False):
+        mn = gg.min_dist_cm if 'min_dist_cm' in gg else gg.final_dist_cm
+        md.append(f'| {lab} | {gg.start_dist_cm.mean():.1f} | {gg.final_dist_cm.mean():.1f} | {mn.mean():.1f} | '
+                  f'{gg.progress.mean():+.1f} | {(gg.start_dist_cm - mn).mean():+.1f} | {len(gg)} |\n')
     md.append('\n## E3 · cost per plan (same CEM budget, horizon and replanning for all)\n')
     md.append('| model | model calls / plan | sec / plan |\n|---|---|---|\n')
-    for lab, gg in pl[pl.arch != 'replay'].groupby('label', sort=False):
+    for lab, gg in pl[~pl.arch.isin(['replay', 'random'])].groupby('label', sort=False):
         md.append(f'| {lab} | {int(gg.calls_per_solve.iloc[0])} | {gg.solve_sec.mean():.2f} |\n')
 
 (out / 'summary.md').write_text(''.join(md))

@@ -25,6 +25,10 @@ class Cache:
         self.n_eval = int(self.m['n_eval'])
         self.thresholds = json.loads((root / 'phase_thresholds.json').read_text())
 
+    def episode_of(self, idx):
+        """Episode index of each global frame index."""
+        return np.searchsorted(self.ep_offset, idx, side='right') - 1
+
     def episodes(self, split):
         cut = len(self.ep_len) - self.n_eval
         return range(cut) if split == 'train' else range(cut, len(self.ep_len))
@@ -51,13 +55,18 @@ def probe_targets(m, idx):
                            m['grip'][idx][:, None]], 1).astype(np.float32)
 
 
-def probe_features(z):
-    """(N, P, D) -> (N, 16 * D): average-pool the patch grid to 4x4 (a linear map)."""
+def probe_features(z, grid=4):
+    """(N, P, D) -> (N, grid^2 * D): average-pool the patch grid to at most grid x grid (a linear map).
+
+    The default (4) keeps the probe identical across --pool settings, which is what makes probe
+    numbers comparable between runs, but it also means the probe cannot see detail finer than 4x4 even
+    when the latent has an 8x8 grid. Use --probe-grid 8 in eval_openloop.py to check that claim
+    (24,576 features; the ridge Gram matrix is ~2.4 GB)."""
     z = torch.as_tensor(z, dtype=torch.float32)
     n, p, d = z.shape
     g = int(round(p ** 0.5))
-    if g > 4:
-        z = F.adaptive_avg_pool2d(z.transpose(1, 2).reshape(n, d, g, g), 4).flatten(2).transpose(1, 2)
+    if g > grid:
+        z = F.adaptive_avg_pool2d(z.transpose(1, 2).reshape(n, d, g, g), grid).flatten(2).transpose(1, 2)
     return z.reshape(n, -1)
 
 
