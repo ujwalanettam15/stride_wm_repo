@@ -28,7 +28,7 @@
 #   data16 (~0.3 h), train16 (18 models x ~37 min; 6 with SEEDS="0"), openloop16, plan16 (~5.5 h)
 #
 # Hours are estimates in plain fp32; TF32=1 (the default here) should roughly halve the GPU-bound parts.
-# Outputs: data/cache (8x8), runs8/, results8/; scale-up: data/cache16, runs16/, results16/
+# Outputs: data/cache (8x8), runs8/, results_a100/; scale-up: data/cache16, runs16/, results_a100_16x16/
 set -euo pipefail
 cd "$(dirname "$0")"
 EPISODES=${EPISODES:-250}   # same data size as the laptop run
@@ -44,6 +44,20 @@ T=""; [ "$TF32" = 1 ] && T="--tf32"
 PLAN="--horizon 40 --pairs $PAIRS --samples 100 --iters 10 --topk 10 $T"
 BASE8="runs8/chunk_k1_s0.pt runs8/chunk_k2_s0.pt runs8/chunk_k4_s0.pt runs8/chunk_k5_s0.pt runs8/chunk_k8_s0.pt runs8/dinowm_k5_s0.pt"
 export PYTHONUNBUFFERED=1 PYTHONWARNINGS=ignore
+
+# Keep a copy of everything this run prints next to its results (logs/ is not in git; this folder is),
+# so the log travels back with the results when they are committed. One file per invocation, written as
+# it goes, so a job killed at its time limit still leaves its log.
+if [ "$DRY_RUN" != 1 ]; then
+  LOG_DIR=results_a100/run_logs
+  [[ " $STAGES " == *16* ]] && LOG_DIR=results_a100_16x16/run_logs
+  mkdir -p "$LOG_DIR"
+  LOG="$LOG_DIR/$(date +%Y%m%d_%H%M%S)_${SLURM_JOB_ID:-local}.log"
+  exec > >(tee -a "$LOG") 2>&1
+  echo "run_a100.sh | commit $(git rev-parse --short HEAD 2>/dev/null || echo unknown) | host $(hostname) |" \
+       "job ${SLURM_JOB_ID:-none} | log $LOG"
+  echo "settings: STAGES=\"$STAGES\" EPISODES=$EPISODES STEPS=$STEPS SEEDS=\"$SEEDS\" SPAN=$SPAN PAIRS=$PAIRS TF32=$TF32"
+fi
 
 T_START=$(date +%s)
 stamp() { echo "== $(date '+%F %T') [+$(( ($(date +%s) - T_START) / 60 )) min] $*  [free disk: $(df -h . | awk 'NR==2{print $4}')]"; }
@@ -62,14 +76,14 @@ report() {  # $1 = results dir, $2 = runs dir, $3 = cache
 }
 openloop8() {  # open loop for every 8x8 model trained so far, plus the shuffled-action control; then the report
   run python scripts/eval_openloop.py --cache data/cache --ckpts runs8/*.pt --horizon 40 --every 2 --batch 128 \
-    --out results8/openloop_main.csv $T
+    --out results_a100/openloop_main.csv $T
   run python scripts/eval_openloop.py --cache data/cache --ckpts $BASE8 --horizon 40 --every 2 --batch 128 \
-    --shuffle-actions --out results8/openloop_shuf.csv $T
+    --shuffle-actions --out results_a100/openloop_shuf.csv $T
   run python -c "
 import pandas as pd
-a, b = pd.read_csv('results8/openloop_main.csv'), pd.read_csv('results8/openloop_shuf.csv')
-pd.concat([a, b[b.arch.str.endswith('-shuf')]]).to_csv('results8/openloop.csv', index=False)"
-  report results8 runs8 data/cache
+a, b = pd.read_csv('results_a100/openloop_main.csv'), pd.read_csv('results_a100/openloop_shuf.csv')
+pd.concat([a, b[b.arch.str.endswith('-shuf')]]).to_csv('results_a100/openloop.csv', index=False)"
+  report results_a100 runs8 data/cache
 }
 
 if want setup; then
@@ -114,20 +128,20 @@ if want compound; then
   done
   openloop8
   run python scripts/eval_compounding.py --cache data/cache --ckpts runs8/chunk_k[1248]_s*.pt runs8/chunk_k[1248]-u*_s*.pt \
-    --horizon 40 --every 4 --batch 128 --openloop results8/openloop.csv --out results8/compounding.csv $T
+    --horizon 40 --every 4 --batch 128 --openloop results_a100/openloop.csv --out results_a100/compounding.csv $T
 fi
 
 if want cost; then
   stamp cost
-  run python scripts/fit_cost.py --cache data/cache --out results8/cost_check.md
+  run python scripts/fit_cost.py --cache data/cache --out results_a100/cost_check.md
 fi
 
 if want plan8; then
   stamp plan8
   # chosen cost first (with replay and the random null), then the original cost on the same pairs as the control
-  run python scripts/eval_plan.py --cache data/cache --ckpts replay random $BASE8 --cost best $PLAN --out results8/plan.jsonl
-  run python scripts/eval_plan.py --cache data/cache --ckpts $BASE8 --cost latent $PLAN --out results8/plan.jsonl
-  report results8 runs8 data/cache
+  run python scripts/eval_plan.py --cache data/cache --ckpts replay random $BASE8 --cost best $PLAN --out results_a100/plan.jsonl
+  run python scripts/eval_plan.py --cache data/cache --ckpts $BASE8 --cost latent $PLAN --out results_a100/plan.jsonl
+  report results_a100 runs8 data/cache
 fi
 
 if want ablate8; then
@@ -143,7 +157,7 @@ if want ablate8; then
   openloop8   # includes the A4 shuffled-action control
   # A4: a probe that reads the full 8x8 grid instead of pooling to 4x4
   run python scripts/eval_openloop.py --cache data/cache --ckpts runs8/chunk_k1_s0.pt runs8/chunk_k8_s0.pt \
-    --horizon 40 --every 2 --batch 128 --probe-grid 8 --out results8/openloop_probe8.csv $T
+    --horizon 40 --every 2 --batch 128 --probe-grid 8 --out results_a100/openloop_probe8.csv $T
 fi
 
 # ---- optional scale-up to 16x16 patches (not in the default STAGES; see the header) -------------------
@@ -178,17 +192,17 @@ if want openloop16; then
   stamp openloop16
   # batch 64: at 256 a k=1 rollout ran a 16 GB laptop out of memory at 8x8; 16x16 needs ~4x the memory
   run python scripts/eval_openloop.py --cache data/cache16 --ckpts runs16/*.pt \
-    --horizon 80 --every 2 --batch 64 --out results16/openloop.csv $T
+    --horizon 80 --every 2 --batch 64 --out results_a100_16x16/openloop.csv $T
   run python scripts/eval_compounding.py --cache data/cache16 --ckpts runs16/*.pt --horizon 40 --every 4 --batch 32 \
-    --out results16/compounding.csv $T
-  report results16 runs16 data/cache16
+    --out results_a100_16x16/compounding.csv $T
+  report results_a100_16x16 runs16 data/cache16
 fi
 
 if want plan16; then
   stamp plan16
-  [ -f data/cache16/cost.pt ] || run python scripts/fit_cost.py --cache data/cache16 --out results16/cost_check.md
+  [ -f data/cache16/cost.pt ] || run python scripts/fit_cost.py --cache data/cache16 --out results_a100_16x16/cost_check.md
   run python scripts/eval_plan.py --cache data/cache16 --ckpts replay random runs16/*_s0.pt --cost best $PLAN \
-    --out results16/plan.jsonl
-  report results16 runs16 data/cache16
+    --out results_a100_16x16/plan.jsonl
+  report results_a100_16x16 runs16 data/cache16
 fi
 stamp DONE

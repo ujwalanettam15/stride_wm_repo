@@ -27,6 +27,19 @@ Full results in "Failure and error analysis" and
   offline check that picks one before any planning run (`scripts/fit_cost.py`, `eval_plan.py --cost`),
   resumable planning, `--tf32`, and two pre-flight checks (`scripts/check_cache.py`, `scripts/check_port.py`).
 
+## Results history (each run has its own folder; nothing is overwritten)
+
+| run | folder | machine | data / model | what it answered |
+|---|---|---|---|---|
+| CPU pilot | `results_cpu_pilot/` | 2 CPU cores | 120 episodes, 4×4 patches, 4.9M params, 5k steps, 1–2 seeds | pipeline works end to end |
+| Prelim | `results/` | M1 Pro | 120 episodes, 8×8, 4.9M params, 5k steps, 2 seeds; old planner | 4×4 pooling was not hiding contact detail; old planner had 3 bugs |
+| Full laptop run | `results_mac/` | M1 Pro, ~26 h | 250 episodes, 8×8, 22M params, 20k steps, 3 seeds; fixed planner | E1–E4: coarser stride lower error; encoder tie; no planner beats random; cost tracks the arm. `compounding.md` (added later, same checkpoints): the coarse-stride advantage is all in carried-over error |
+| A100 run | `results_a100/` | 1× A100 | same data and settings as the laptop run | hypothesis tests: equal-span ablation, planning cost, A2–A4 (pending) |
+| A100 scale-up (optional) | `results_a100_16x16/` | 1× A100 | 16×16 patches | does it hold at full resolution? (only if hours remain) |
+
+Each run's code is the commit that added its folder (`git log -- <folder>`); A100 logs in
+`results_a100/run_logs/` start with the commit they ran.
+
 ## Running on one A100 (HPC, ~40 GPU-hours)
 
 `run_a100.sh` is ordered by what the progress-update feedback asked for: experiments that can confirm or
@@ -51,7 +64,7 @@ Optional scale-up to 16×16 patches (only with hours to spare; not in the defaul
 `STAGES="data16 timing16 train16 openloop16 plan16" SEEDS="0" bash run_a100.sh`
 (6 models × ~37 min, open loop, ~5.5 h of planning).
 
-**Stride vs error accumulation (`compound`).** Two measurements, both in `results8/compounding.md`:
+**Stride vs error accumulation (`compound`).** Two measurements, both in `results_a100/compounding.md`:
 
 1. *Equal-span ablation.* Default models are trained on one k-step transition, so a k=1 model is never
    trained on its own outputs but is chained 40 times at test time. Here every stride is trained on the
@@ -101,9 +114,21 @@ mkdir -p logs && sbatch slurm_a100.sbatch          # log: logs/stride-a100-<jobi
 Useful variables: `STAGES="data base8 compound"` (run a subset), `TF32=0`, `SEEDS="0 1"` (seeds of the
 compounding ablation), `SPAN=8` (shorter chain, about half the cost), `PAIRS=20`,
 `DRY_RUN=1 bash run_a100.sh` (print every command without running). If the cluster splits work into
-shorter jobs, submit the same file repeatedly. Outputs: `results8/` (`compounding.md`, `summary.md`,
-`failure_analysis.md`, `cost_check.md`), checkpoints in `runs8/`. Disk: ~12 GB (episodes 7.6 GB, 8×8
-latents 2.5 GB, checkpoints ~2 GB); the 16×16 scale-up adds ~12 GB.
+shorter jobs, submit the same file repeatedly. Outputs: `results_a100/` (`compounding.md`, `summary.md`,
+`failure_analysis.md`, `cost_check.md`, and `run_logs/` with a copy of everything each job printed),
+checkpoints in `runs8/`. Disk: ~12 GB (episodes 7.6 GB, 8×8 latents 2.5 GB, checkpoints ~2 GB); the
+16×16 scale-up adds ~12 GB.
+
+**Sending results back.** Result tables, figures and run logs are tracked by git; checkpoints (`*.pt`) and
+data stay on the cluster (ignored). After a job, on the cluster (pushing needs a GitHub token or SSH key there):
+
+```bash
+git add results_a100 && git commit -m "A100 run: <stages> (job <jobid>)" && git pull --rebase && git push
+```
+
+No GitHub access on the cluster: copy `results_a100/` to the laptop instead
+(`rsync -avP <user>@<hpc-host>:<path>/stride_wm_repo/stride-wm/results_a100 .`) and commit it there.
+Commit after each job, not only at the end, so the history shows how the results changed.
 
 If MuJoCo fails to render on the compute node, try `export MUJOCO_GL=osmesa` (slower). If the DINOv2
 download fails inside the job, run the `from_pretrained` line above on a login node first; the sbatch file
