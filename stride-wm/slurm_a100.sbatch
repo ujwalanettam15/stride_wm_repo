@@ -14,8 +14,21 @@
 
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:-.}"
-# CHANGE: activate the environment you installed requirements.txt into (venv, conda, or a container)
-source .venv/bin/activate
 export HF_HUB_OFFLINE=${HF_HUB_OFFLINE:-1}   # compute nodes often have no internet: use the cached DINOv2 weights
 nvidia-smi || true
-bash run_a100.sh
+
+# The .venv must be used inside the same environment it was created in.
+# CHANGE (Singularity/Apptainer): if you built .venv inside a container, set SIF to that image. Find it by
+# running `echo $SINGULARITY_CONTAINER` (or `echo $APPTAINER_CONTAINER`) inside the container shell. Add any
+# --overlay/--bind options your cluster's container setup uses to SIF_OPTS.
+SIF=${SIF:-}
+SIF_OPTS=${SIF_OPTS:-}
+RUN='source .venv/bin/activate && bash run_a100.sh'
+if [ -n "$SIF" ]; then
+  CTR=$(command -v singularity || command -v apptainer || true)
+  [ -n "$CTR" ] || { echo "SIF is set but neither singularity nor apptainer is on PATH (try: module load singularity)"; exit 1; }
+  # --nv exposes the GPU inside the container; the environment (STAGES, SEEDS, ...) is passed through
+  $CTR exec --nv $SIF_OPTS "$SIF" bash -c "$RUN"
+else
+  bash -c "$RUN"
+fi

@@ -91,7 +91,7 @@ probe cube + EE 0.46 cube / 0.89 EE.
 **Steps on the cluster**
 
 ```bash
-git clone -b a100-gpu-run https://github.com/ujwalanettam15/stride_wm_repo.git   # existing clone: git fetch && git checkout a100-gpu-run
+git clone -b fix/mps-encoder-torch-pin https://github.com/ujwalanettam15/stride_wm_repo.git   # existing clone: git pull
 cd stride_wm_repo/stride-wm
 python3.12 -m venv .venv && source .venv/bin/activate              # or your cluster's conda/module setup
 pip install -r requirements.txt                                     # Linux torch 2.7.1 wheels are CUDA 12.6 builds
@@ -105,10 +105,14 @@ is then exact, and collection is skipped). From the laptop, in `stride-wm/`:
 rsync -avP data/cube_single.h5 data/cache <user>@<hpc-host>:<path>/stride_wm_repo/stride-wm/data/
 ```
 
-Then edit the lines marked `CHANGE` in `slurm_a100.sbatch` (GPU request syntax, account, environment) and submit:
+Then edit the lines marked `CHANGE` in `slurm_a100.sbatch` (GPU request syntax, account, time) and submit.
+If you built `.venv` inside a Singularity/Apptainer container, the job must run inside the same container:
+get the image path with `echo $SINGULARITY_CONTAINER` in the container shell and pass it as `SIF` (plus any
+`--overlay`/`--bind` options your cluster uses as `SIF_OPTS`):
 
 ```bash
 mkdir -p logs && sbatch slurm_a100.sbatch          # log: logs/stride-a100-<jobid>.out
+SIF=/path/to/image.sif sbatch slurm_a100.sbatch    # if .venv was built inside a container
 ```
 
 Useful variables: `STAGES="data base8 compound"` (run a subset), `TF32=0`, `SEEDS="0 1"` (seeds of the
@@ -133,6 +137,11 @@ Commit after each job, not only at the end, so the history shows how the results
 If MuJoCo fails to render on the compute node, try `export MUJOCO_GL=osmesa` (slower). If the DINOv2
 download fails inside the job, run the `from_pretrained` line above on a login node first; the sbatch file
 sets `HF_HUB_OFFLINE=1` so jobs use the cached weights.
+
+The `data` stage also runs `scripts/check_render.py`: planning renders its current frames on the cluster and
+compares them with goal frames from the dataset (rendered on the laptop). It reports how different the
+cluster's renders are, as a fraction of a one-step change; the laptop that collected the dataset scores 0.09
+(reset-from-state does not reproduce the arm's edges exactly), so only a clearly higher number matters.
 
 ## Getting started (step by step)
 

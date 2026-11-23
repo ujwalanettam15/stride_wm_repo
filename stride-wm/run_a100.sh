@@ -54,9 +54,11 @@ if [ "$DRY_RUN" != 1 ]; then
   mkdir -p "$LOG_DIR"
   LOG="$LOG_DIR/$(date +%Y%m%d_%H%M%S)_${SLURM_JOB_ID:-local}.log"
   exec > >(tee -a "$LOG") 2>&1
-  echo "run_a100.sh | commit $(git rev-parse --short HEAD 2>/dev/null || echo unknown) | host $(hostname) |" \
+  # ${HOSTNAME}: bash sets it; the `hostname` command is missing in some containers (Singularity images)
+  echo "run_a100.sh | commit $(git rev-parse --short HEAD 2>/dev/null || echo unknown) | host ${HOSTNAME:-unknown} |" \
        "job ${SLURM_JOB_ID:-none} | log $LOG"
   echo "settings: STAGES=\"$STAGES\" EPISODES=$EPISODES STEPS=$STEPS SEEDS=\"$SEEDS\" SPAN=$SPAN PAIRS=$PAIRS TF32=$TF32"
+  python -m pip freeze > "${LOG%.log}_packages.txt" 2>/dev/null || true   # exact package versions of this run
 fi
 
 T_START=$(date +%s)
@@ -99,6 +101,7 @@ if want data; then
   # encoder.json is written last, so it marks a finished cache (an interrupted encode leaves z.npy behind)
   [ -f data/cache/encoder.json ] || run python scripts/encode.py --h5 data/cube_single.h5 --out data/cache --pool 2 --n-eval "$N_EVAL" --batch 128
   run python scripts/check_cache.py --cache8 data/cache
+  run python scripts/check_render.py --cache data/cache   # planning renders frames here; warns, never stops
 fi
 
 if want base8; then
