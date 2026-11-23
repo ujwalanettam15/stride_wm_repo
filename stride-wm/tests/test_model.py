@@ -72,3 +72,21 @@ def test_variant_tag_is_empty_for_headline_models():
     assert variant_tag(dict(arch='dinowm', dinowm_emb=10)) == ''
     assert variant_tag(dict(arch='chunk', residual=True, unroll=5)) == '-res-u5'
     assert variant_tag(dict(arch='dinowm', dinowm_emb=64)) == '-e64'
+
+
+@pytest.mark.parametrize('k', [1, 4])
+def test_error_decomposition_separates_fresh_and_carried_in_error(k):
+    from stride.compound import decompose
+    torch.manual_seed(0)
+    m = StrideWM(k, 'chunk', **SMALL).eval()
+    n = 3
+    Z, a = torch.randn(2, n + 1, 16, 32), torch.randn(2, n * k, 5)
+    total, fresh, prop = decompose(m, Z, a, chunk=4)
+    assert total.shape == fresh.shape == prop.shape == (2, n)
+    assert torch.allclose(prop[:, 0], torch.zeros(2), atol=1e-10)   # first call starts from the true latent
+    assert torch.allclose(total[:, 0], fresh[:, 0], atol=1e-6)
+    assert (prop[:, 1:] > 0).all()                                    # later calls start from predictions
+    zs = m.rollout(Z[:, 0], a)
+    assert torch.allclose(total, ((zs - Z[:, 1:]) ** 2).mean((2, 3)), atol=1e-6)
+    one = m(Z[:, 1], a[:, k: 2 * k])                                  # call 2 given the true latent at depth k
+    assert torch.allclose(fresh[:, 1], ((one - Z[:, 2]) ** 2).mean((1, 2)), atol=1e-6)

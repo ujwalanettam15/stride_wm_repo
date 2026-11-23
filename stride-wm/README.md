@@ -22,40 +22,57 @@ Full results in "Failure and error analysis" and
 - **New tools:** `scripts/analyze_failures.py`, `run_ablations.sh`, `stride/cost.py`, `stride/stats.py`,
   `tests/test_utils.py`; `eval_openloop.py` gained `--shuffle-actions` and `--probe-grid`.
 - **A100 run (next experiments).** `run_a100.sh` + `slurm_a100.sbatch` run the GPU plan in ~40 GPU-hours
-  (section below). New: candidate planning costs and an offline check that picks one before any planning
-  run (`scripts/fit_cost.py`, `eval_plan.py --cost`), resumable planning, `--tf32`, and two pre-flight
-  checks (`scripts/check_cache.py`, `scripts/check_port.py`).
+  (section below), hypothesis tests first. New: the stride-vs-accumulation ablation and error carry-over
+  decomposition (`scripts/eval_compounding.py`, `stride/compound.py`), candidate planning costs and an
+  offline check that picks one before any planning run (`scripts/fit_cost.py`, `eval_plan.py --cost`),
+  resumable planning, `--tf32`, and two pre-flight checks (`scripts/check_cache.py`, `scripts/check_port.py`).
 
 ## Running on one A100 (HPC, ~40 GPU-hours)
 
-`run_a100.sh` runs the progress update's "Next experiments" on one A100 40 GB. Settings match the laptop run
-(250 episodes, 20k steps, 3 seeds) except the patch grid, 8×8 → 16×16, so that is the one change the GPU
-run tests. Stages run in priority order; each skips work whose output exists, so resubmitting the same job
-after a time limit or crash resumes.
+`run_a100.sh` is ordered by what the progress-update feedback asked for: experiments that can confirm or
+falsify an explanation run first, at the laptop's settings (8×8 patches, 250 episodes, 20k steps), so
+results are directly comparable with `results_mac/`. Scaling up to 16×16 patches is optional and last.
+Each stage skips work whose output exists, so resubmitting the same job after a time limit or crash resumes.
 
-| stage | what it does | est. hours (fp32) |
-|---|---|---|
-| `setup` | versions, GPU, unit tests | minutes |
-| `data` | collect episodes if missing (CPU), encode 8×8 and 16×16 caches, check 16×16 against 8×8 | ~1 |
-| `timing` | 300 steps of a 16×16 model, prints the projected hours for `train16` | ~0.05 |
-| `base8` | 6 seed-0 models at laptop settings; **port check** against the laptop's validation losses (stops the run if training behaves differently on the same data); ablation baselines | ~1.5 |
-| `cost` | fit the candidate planning costs, offline check, pick one | minutes |
-| `train16` | 18 models at 16×16 (5 strides + DINO-WM, 3 seeds, 20k steps) | ~11 |
-| `openloop16` | E1/E4 on the 16×16 models, report, failure analysis | ~0.75 |
-| `plan16` | E2/E3 on seed 0 with the chosen cost, 20 pairs, plus replay and random null | ~5.5 |
-| `ablate8` | A1 (8-step chain), A2 (widths), A3 (residual) at laptop settings; A4 shuffle and 8×8-probe controls | ~6 |
-| `control16` | E2 again with the original latent cost on the same pairs | ~5.5 |
+| stage | explanation it tests | what would falsify it | est. hours (fp32) |
+|---|---|---|---|
+| `setup`, `data` | – (versions, tests; collect if missing, encode 8×8, cache check) | – | 0.2–1 |
+| `base8` | port check: 6 seed-0 models must match the laptop's validation losses on the same data | – (stops the run if training behaves differently) | ~0.75 |
+| `compound` | "coarse strides win because they chain fewer calls, not because they learn better dynamics" | the stride ordering survives when every stride is trained on the same 16-step chained span (k = 1, 2, 4, 8; 3 seeds) | ~13 |
+| `cost` | – (fits the candidate planning costs, offline check, picks one) | – | minutes |
+| `plan8` | "planning fails because the latent cost tracks the arm, not the cube" | the chosen cost does not beat the random-action null either (30 pairs; same pairs replanned with the original cost as the control) | ~4.7 |
+| `ablate8` | "the E4 null hides an embedding-width effect" (A2); "models drift a static cube" (A3); "models use their actions", "4×4 probe pooling hides detail" (A4) | width-matched models still tie; residual models still lose to copy-last in Reach; shuffled actions do not raise the error | ~1.5 |
 
-Total ≈ 31 h in plain fp32, leaving ~9 h of the 40 as buffer. `TF32=1` (the default in the script) uses the
-A100's TF32 tensor cores and should roughly halve the GPU-bound stages. Hours are extrapolated from the
-M1 Pro run; `timing` measures the real rate in the first minutes.
+Total ≈ 21 h in plain fp32. `TF32=1` (the default in the script) uses the A100's TF32 tensor cores and
+should roughly halve the GPU-bound stages. Hours are extrapolated from the M1 Pro run; `base8` prints the
+measured speed and the projected time for `compound` before that stage starts.
 
-**Planning cost.** On true latents the original latent-MSE cost ranks frames by arm distance (Spearman ρ 0.83)
-far better than by cube distance (0.28), so planners are rewarded for matching the arm pose. `fit_cost.py`
-fits three alternatives on training episodes (patch-weighted MSE, probe-decoded cube distance, cube +
-end-effector distance), checks them on held-out episodes, and picks the highest cube ρ; `plan16` plans with
-that choice, `control16` with the original. On the laptop's 8×8 cache: latent 0.28, patch-weighted 0.34,
-probe cube 0.59 (chosen), probe cube + EE 0.46 cube / 0.89 EE.
+Optional scale-up to 16×16 patches (only with hours to spare; not in the default stages):
+`STAGES="data16 timing16 train16 openloop16 plan16" SEEDS="0" bash run_a100.sh`
+(6 models × ~37 min, open loop, ~5.5 h of planning).
+
+**Stride vs error accumulation (`compound`).** Two measurements, both in `results8/compounding.md`:
+
+1. *Equal-span ablation.* Default models are trained on one k-step transition, so a k=1 model is never
+   trained on its own outputs but is chained 40 times at test time. Here every stride is trained on the
+   same 16-step chained loss (`--unroll 16/k`: k=1 ×16, k=2 ×8, k=4 ×4, k=8 ×2), so all models have seen
+   their own outputs over the same span and only the stride differs. The table reports the spread across
+   strides with default and with equal-span training.
+2. *Error carry-over decomposition* (`scripts/eval_compounding.py`, no training needed). Each call's error
+   is split into fresh error (the call given the true previous latent) and propagated error (the part
+   that comes from its input being a prediction), and a gain: the share of incoming error that survives
+   a call, also expressed per env step so strides can be compared. Equal per-step gain across strides
+   means the models carry errors forward equally well and coarse strides win only by injecting fresh
+   error less often.
+
+The decomposition on the 18 laptop checkpoints is in `results_mac/compounding.md`.
+
+**Planning cost (`cost`, `plan8`).** On true latents the original latent-MSE cost ranks frames by arm
+distance (Spearman ρ 0.83) far better than by cube distance (0.28), so planners are rewarded for matching
+the arm pose. `fit_cost.py` fits three alternatives on training episodes (patch-weighted MSE,
+probe-decoded cube distance, cube + end-effector distance), checks them on held-out episodes, and picks
+the highest cube ρ. On the laptop's 8×8 cache: latent 0.28, patch-weighted 0.34, probe cube 0.59 (chosen),
+probe cube + EE 0.46 cube / 0.89 EE.
 
 **Steps on the cluster**
 
@@ -80,11 +97,12 @@ Then edit the lines marked `CHANGE` in `slurm_a100.sbatch` (GPU request syntax, 
 mkdir -p logs && sbatch slurm_a100.sbatch          # log: logs/stride-a100-<jobid>.out
 ```
 
-Useful variables: `STAGES="data timing base8"` (run a subset), `TF32=0`, `SEEDS="0 1"`, `PAIRS=10`,
+Useful variables: `STAGES="data base8 compound"` (run a subset), `TF32=0`, `SEEDS="0 1"` (seeds of the
+compounding ablation), `SPAN=8` (shorter chain, about half the cost), `PAIRS=20`,
 `DRY_RUN=1 bash run_a100.sh` (print every command without running). If the cluster splits work into
-shorter jobs, submit the same file repeatedly. Outputs: `results16/` (16×16 E1–E4, cost check),
-`results8/` (ablations, 8×8 cost check), checkpoints in `runs16/` and `runs8/`. Disk: ~25 GB
-(episodes 7.6 GB, 16×16 latents 9.9 GB, 8×8 latents 2.5 GB, checkpoints ~3 GB).
+shorter jobs, submit the same file repeatedly. Outputs: `results8/` (`compounding.md`, `summary.md`,
+`failure_analysis.md`, `cost_check.md`), checkpoints in `runs8/`. Disk: ~12 GB (episodes 7.6 GB, 8×8
+latents 2.5 GB, checkpoints ~2 GB); the 16×16 scale-up adds ~12 GB.
 
 If MuJoCo fails to render on the compute node, try `export MUJOCO_GL=osmesa` (slower). If the DINOv2
 download fails inside the job, run the `from_pretrained` line above on a login node first; the sbatch file
