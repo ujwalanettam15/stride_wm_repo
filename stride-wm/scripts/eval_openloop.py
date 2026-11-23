@@ -24,7 +24,7 @@ import torch.nn.functional as F
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from stride import phases
 from stride.data import Cache, Probe, physical_errors, probe_features, probe_targets
-from stride.model import default_device, load, variant_tag
+from stride.model import default_device, enable_tf32, load, variant_tag
 from stride.stats import cluster_mean_se
 
 p = argparse.ArgumentParser()
@@ -36,8 +36,10 @@ p.add_argument('--batch', type=int, default=256)
 p.add_argument('--shuffle-actions', action='store_true', help='action-sensitivity control (see docstring)')
 p.add_argument('--probe-grid', type=int, default=4, help='probe sees the latent pooled to at most this grid')
 p.add_argument('--out', default='results/openloop.csv')
+p.add_argument('--tf32', action='store_true', help='TF32 matmuls on CUDA (A100: ~2x faster)')
 p.add_argument('--device', default=default_device())
 args = p.parse_args()
+enable_tf32(args.tf32)
 H = args.horizon
 c = Cache(args.cache, mmap=True)
 m, ph = c.m, c.m['phase']

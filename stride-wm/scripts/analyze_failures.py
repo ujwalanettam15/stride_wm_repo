@@ -92,12 +92,13 @@ if Path(args.openloop).exists():
 # ------------------------------------------------------------------ planning
 if Path(args.plan).exists():
     pl = pd.DataFrame([json.loads(x) for x in open(args.plan)])
-    for col, default in (('variant', ''), ('min_dist_cm', np.nan)):
+    for col, default in (('variant', ''), ('cost', ''), ('min_dist_cm', np.nan)):
         if col not in pl:
             pl[col] = default
-    pl['variant'] = pl['variant'].fillna('')
+    pl['variant'], pl['cost'] = pl['variant'].fillna(''), pl['cost'].fillna('')
     pl['model_label'] = pl.apply(lambda r: {'replay': 'expert replay', 'random': 'random actions'}.get(r.arch)
-                                 or f"{label(r)}{r.variant}", axis=1)
+                                 or f"{label(r)}{r.variant}"
+                                 f"{f' · {r.cost} cost' if r.cost not in ('', 'latent') else ''}", axis=1)
     pl['progress'] = pl.start_dist_cm - pl.final_dist_cm
     pl['bin'] = pd.cut(pl.start_dist_cm, [0, 8, 15, 1e9], labels=['<8 cm', '8-15 cm', '>=15 cm'])
 

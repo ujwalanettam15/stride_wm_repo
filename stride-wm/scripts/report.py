@@ -197,12 +197,12 @@ fig.savefig(out / 'fig_e1_phase.png', dpi=160)
 # ---- E2/E3 planning
 if Path(args.plan).exists():
     pl = pd.DataFrame([json.loads(x) for x in open(args.plan)])
-    if 'variant' not in pl:
-        pl['variant'] = ''
-    pl['variant'] = pl['variant'].fillna('')
+    for col in ('variant', 'cost'):  # older logs predate ablation variants / --cost (latent)
+        pl[col] = pl[col].fillna('') if col in pl else ''
     NULL = {'replay': 'expert replay (pipeline check)', 'random': 'random actions (null planner)'}
     pl['label'] = pl.apply(lambda r: NULL.get(r.arch) or
-                           f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}{r.variant}", axis=1)
+                           f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}{r.variant}"
+                           f"{f' · {r.cost} cost' if r.cost not in ('', 'latent') else ''}", axis=1)
     pl['progress'] = pl.start_dist_cm - pl.final_dist_cm
     md.append('\n## E2 · planning success by goal offset (env steps): rate [95% Wilson interval] (pairs)\n')
     md.append('A rate only means something next to the random-action row and its interval; with n < 20 '

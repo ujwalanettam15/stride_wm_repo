@@ -21,6 +21,74 @@ Full results in "Failure and error analysis" and
   unchanged): `--residual`, `--unroll`, `--dinowm-emb`. They exist for the ablations.
 - **New tools:** `scripts/analyze_failures.py`, `run_ablations.sh`, `stride/cost.py`, `stride/stats.py`,
   `tests/test_utils.py`; `eval_openloop.py` gained `--shuffle-actions` and `--probe-grid`.
+- **A100 run (next experiments).** `run_a100.sh` + `slurm_a100.sbatch` run the GPU plan in ~40 GPU-hours
+  (section below). New: candidate planning costs and an offline check that picks one before any planning
+  run (`scripts/fit_cost.py`, `eval_plan.py --cost`), resumable planning, `--tf32`, and two pre-flight
+  checks (`scripts/check_cache.py`, `scripts/check_port.py`).
+
+## Running on one A100 (HPC, ~40 GPU-hours)
+
+`run_a100.sh` runs the progress update's "Next experiments" on one A100 40 GB. Settings match the laptop run
+(250 episodes, 20k steps, 3 seeds) except the patch grid, 8×8 → 16×16, so that is the one change the GPU
+run tests. Stages run in priority order; each skips work whose output exists, so resubmitting the same job
+after a time limit or crash resumes.
+
+| stage | what it does | est. hours (fp32) |
+|---|---|---|
+| `setup` | versions, GPU, unit tests | minutes |
+| `data` | collect episodes if missing (CPU), encode 8×8 and 16×16 caches, check 16×16 against 8×8 | ~1 |
+| `timing` | 300 steps of a 16×16 model, prints the projected hours for `train16` | ~0.05 |
+| `base8` | 6 seed-0 models at laptop settings; **port check** against the laptop's validation losses (stops the run if training behaves differently on the same data); ablation baselines | ~1.5 |
+| `cost` | fit the candidate planning costs, offline check, pick one | minutes |
+| `train16` | 18 models at 16×16 (5 strides + DINO-WM, 3 seeds, 20k steps) | ~11 |
+| `openloop16` | E1/E4 on the 16×16 models, report, failure analysis | ~0.75 |
+| `plan16` | E2/E3 on seed 0 with the chosen cost, 20 pairs, plus replay and random null | ~5.5 |
+| `ablate8` | A1 (8-step chain), A2 (widths), A3 (residual) at laptop settings; A4 shuffle and 8×8-probe controls | ~6 |
+| `control16` | E2 again with the original latent cost on the same pairs | ~5.5 |
+
+Total ≈ 31 h in plain fp32, leaving ~9 h of the 40 as buffer. `TF32=1` (the default in the script) uses the
+A100's TF32 tensor cores and should roughly halve the GPU-bound stages. Hours are extrapolated from the
+M1 Pro run; `timing` measures the real rate in the first minutes.
+
+**Planning cost.** On true latents the original latent-MSE cost ranks frames by arm distance (Spearman ρ 0.83)
+far better than by cube distance (0.28), so planners are rewarded for matching the arm pose. `fit_cost.py`
+fits three alternatives on training episodes (patch-weighted MSE, probe-decoded cube distance, cube +
+end-effector distance), checks them on held-out episodes, and picks the highest cube ρ; `plan16` plans with
+that choice, `control16` with the original. On the laptop's 8×8 cache: latent 0.28, patch-weighted 0.34,
+probe cube 0.59 (chosen), probe cube + EE 0.46 cube / 0.89 EE.
+
+**Steps on the cluster**
+
+```bash
+git clone -b a100-gpu-run https://github.com/ujwalanettam15/stride_wm_repo.git   # existing clone: git fetch && git checkout a100-gpu-run
+cd stride_wm_repo/stride-wm
+python3.12 -m venv .venv && source .venv/bin/activate              # or your cluster's conda/module setup
+pip install -r requirements.txt                                     # Linux torch 2.7.1 wheels are CUDA 12.6 builds
+python -c "from transformers import AutoModel; AutoModel.from_pretrained('facebook/dinov2-small')"  # login node: cache the weights
+```
+
+Recommended: copy the laptop's episodes and 8×8 latents so both runs use identical frames (the port check
+is then exact, and collection is skipped). From the laptop, in `stride-wm/`:
+
+```bash
+rsync -avP data/cube_single.h5 data/cache <user>@<hpc-host>:<path>/stride_wm_repo/stride-wm/data/
+```
+
+Then edit the lines marked `CHANGE` in `slurm_a100.sbatch` (GPU request syntax, account, environment) and submit:
+
+```bash
+mkdir -p logs && sbatch slurm_a100.sbatch          # log: logs/stride-a100-<jobid>.out
+```
+
+Useful variables: `STAGES="data timing base8"` (run a subset), `TF32=0`, `SEEDS="0 1"`, `PAIRS=10`,
+`DRY_RUN=1 bash run_a100.sh` (print every command without running). If the cluster splits work into
+shorter jobs, submit the same file repeatedly. Outputs: `results16/` (16×16 E1–E4, cost check),
+`results8/` (ablations, 8×8 cost check), checkpoints in `runs16/` and `runs8/`. Disk: ~25 GB
+(episodes 7.6 GB, 16×16 latents 9.9 GB, 8×8 latents 2.5 GB, checkpoints ~3 GB).
+
+If MuJoCo fails to render on the compute node, try `export MUJOCO_GL=osmesa` (slower). If the DINOv2
+download fails inside the job, run the `from_pretrained` line above on a login node first; the sbatch file
+sets `HF_HUB_OFFLINE=1` so jobs use the cached weights.
 
 ## Getting started (step by step)
 

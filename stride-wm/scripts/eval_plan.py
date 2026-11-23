@@ -17,7 +17,11 @@ Changes after the prelim (see README, "Changes to the original design"):
     a 1.6-3.4 cm nudge inside a 4 cm success radius. Success on those says almost nothing.
   * 'random' pseudo-checkpoint: executes actions drawn from the training action distribution. It is the
     null planner every success rate must beat. ('replay' remains the pipeline check.)
-  * logs min_dist_cm (closest approach) so progress can be reported next to success."""
+  * logs min_dist_cm (closest approach) so progress can be reported next to success.
+  * --cost picks how the predicted latent is compared with the goal (stride/cost.py): the original
+    latent MSE, or a cost fit by scripts/fit_cost.py ('best' = the one it chose). Each row records it.
+  * reruns skip (model, cost, pair, budget) rows already in --out, so a job killed at its time limit
+    resumes where it stopped instead of duplicating rows."""
 import argparse
 import json
 import sys
@@ -34,10 +38,10 @@ import gymnasium as gym
 from stable_worldmodel.planning.solver.cem import CEMSolver
 from stable_worldmodel.policy import PlanConfig
 
-from stride.cost import LatentGoalCost
+from stride.cost import COSTS, LatentGoalCost, load_score
 from stride.data import Cache
 from stride.encoder import encode, load_encoder
-from stride.model import default_device, load, variant_tag
+from stride.model import default_device, enable_tf32, load, variant_tag
 
 p = argparse.ArgumentParser()
 p.add_argument('--cache', default='data/cache')
@@ -55,9 +59,14 @@ p.add_argument('--iters', type=int, default=30)
 p.add_argument('--topk', type=int, default=30)
 p.add_argument('--fast-render', action='store_true')
 p.add_argument('--seed', type=int, default=0)
+p.add_argument('--cost', default='latent', choices=COSTS + ('best',),
+               help="planning cost (stride/cost.py); 'best' = the one scripts/fit_cost.py chose")
+p.add_argument('--cost-file', default=None, help='fit_cost.py output; default <cache>/cost.pt')
+p.add_argument('--tf32', action='store_true', help='TF32 matmuls on CUDA (A100: ~2x faster)')
 p.add_argument('--out', default='results/plan.jsonl')
 p.add_argument('--device', default=default_device())
 args = p.parse_args()
+enable_tf32(args.tf32)
 
 H, R = args.horizon, args.replan
 offsets = [int(x) for x in args.offsets.split(',')] if args.offsets else [H]
@@ -70,6 +79,8 @@ mu_a, sd_a = c.action_stats()
 enc_cfg = json.loads((Path(args.cache) / 'encoder.json').read_text())  # encode frames like the cache
 enc = load_encoder(enc_cfg['encoder']).to(args.device)
 env = make_env(args.fast_render)
+score = load_score(args.cost, args.cost_file or Path(args.cache) / 'cost.pt', args.device)
+print(f'planning cost: {score.kind}', flush=True)
 
 
 def solved_without_planning(t0, d):
@@ -99,24 +110,40 @@ for d in offsets:
     pairs += [(d, t) for t in chosen]
 
 Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+
+
+def row_key(r):  # rows written before --cost existed planned with the latent cost
+    return (r['model'], r.get('cost', 'latent' if r['k'] else ''), r['offset'], r['t0'], r.get('horizon'),
+            r.get('samples'), r.get('iters'), r['seed'])
+
+
+done = set()
+if Path(args.out).exists():
+    done = {row_key(json.loads(x)) for x in open(args.out) if x.strip()}
+    print(f'{len(done)} rows already in {args.out}; matching runs are skipped', flush=True)
 for path in args.ckpts:
     mode = path if path in ('replay', 'random') else 'model'
     if mode == 'replay':
-        info_row = dict(model='expert_replay', k=0, arch='replay', variant='', seed=0)
+        info_row = dict(model='expert_replay', k=0, arch='replay', variant='', seed=0, cost='')
     elif mode == 'random':
-        info_row = dict(model='random_actions', k=0, arch='random', variant='', seed=args.seed)
-        act_rng = np.random.default_rng(args.seed)
+        info_row = dict(model='random_actions', k=0, arch='random', variant='', seed=args.seed, cost='')
     else:
         model, ck = load(path, args.device)
+        if ck['model_kw']['num_patches'] != c.z.shape[1]:
+            sys.exit(f"{path} was trained on {ck['model_kw']['num_patches']} patches but {args.cache} has "
+                     f'{c.z.shape[1]}: pass the cache the model was trained on')
         k, A = model.k, model.action_dim
         mu, sd = ck['act_mean'], ck['act_std']
         info_row = dict(model=Path(path).stem, k=k, arch=ck['model_kw']['arch'],
-                        variant=variant_tag(ck['cfg']), seed=ck['cfg']['seed'])
+                        variant=variant_tag(ck['cfg']), seed=ck['cfg']['seed'], cost=score.kind)
     for d, t0 in pairs:
+        if row_key(dict(**info_row, offset=d, t0=t0, horizon=H, samples=args.samples, iters=args.iters)) in done:
+            continue
+        act_rng = np.random.default_rng([args.seed, t0])  # random null: per pair, so a resumed run matches
         if mode == 'model':  # the cost scores the prediction at the goal's depth (d = H unless misaligned)
-            solver = CEMSolver(LatentGoalCost(model, mu, sd, depth=min(d, H)), num_samples=args.samples,
-                               n_steps=args.iters, topk=args.topk, var_scale=1.0, device=args.device,
-                               seed=args.seed)
+            solver = CEMSolver(LatentGoalCost(model, mu, sd, depth=min(d, H), score=score),
+                               num_samples=args.samples, n_steps=args.iters, topk=args.topk, var_scale=1.0,
+                               device=args.device, seed=args.seed)
             solver.configure(action_space=gym.spaces.Box(-1, 1, (1, A)), n_envs=1,
                              config=PlanConfig(horizon=H // k, receding_horizon=R, action_block=k))
         env.reset(options={'state': np.r_[m['qpos'][t0], m['qvel'][t0]]})

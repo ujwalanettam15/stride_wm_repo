@@ -93,6 +93,14 @@ def default_device():
     return 'mps' if torch.backends.mps.is_available() else 'cpu'
 
 
+def enable_tf32(on=True):
+    """Run float32 matmuls and convolutions on TF32 tensor cores (A100/H100: ~2x faster for these models,
+    ~1e-3 relative precision per product). No effect without CUDA, so laptop runs are unchanged."""
+    if on and torch.cuda.is_available():
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+
+
 def load(path, device='cpu'):
     ck = torch.load(path, map_location=device, weights_only=False)
     model = StrideWM(**ck['model_kw']).to(device)
