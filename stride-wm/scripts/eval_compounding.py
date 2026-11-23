@@ -10,10 +10,12 @@ get there, so the two explanations are confounded in E1. This script separates t
      propagated  difference between the two predictions (error carried in through the input)
      gain        propagated_j / total_{j-1}: the share of the incoming error that survives one call.
                  gain ** (1/k) is the same quantity per env step, comparable across strides.
-   Reading it: if strides have about the same per-step gain, their models carry errors forward equally
-   well and coarse strides win only by injecting fresh error less often (accumulation). If the per-step
-   gain falls with stride, the coarse models also damp incoming error better (a property of the learned
-   dynamics, not of the call count).
+   Reading it: compare strides at the same depth. If the coarse strides' advantage sits in `propagated`
+   while their `fresh` error is equal or worse, they win by chaining fewer calls (accumulation), not by
+   predicting better per call. If their `fresh` error is lower, they learned better dynamics. `fresh`
+   includes frame-to-frame latent content no model can predict; that part does not propagate, so the
+   gain is low at the first calls and rises with depth. This is an accounting of where the error is, not
+   an intervention; the equal-span ablation below is the causal test.
 
 2. Equal-span ablation (A1; needs the `-uN` checkpoints from run_a100.sh, read from --openloop). Every
    stride is trained on the same chained span, so each model has been trained on its own outputs over
@@ -38,7 +40,7 @@ from stride.model import default_device, enable_tf32, load, variant_tag
 
 p = argparse.ArgumentParser()
 p.add_argument('--cache', default='data/cache')
-p.add_argument('--ckpts', nargs='+', required=True)
+p.add_argument('--ckpts', nargs='*', default=[], help='none = rebuild the summary from an existing --out csv')
 p.add_argument('--horizon', type=int, default=40)
 p.add_argument('--every', type=int, default=8, help='start-frame spacing on eval episodes')
 p.add_argument('--batch', type=int, default=64)
@@ -83,8 +85,13 @@ for path in args.ckpts:
 
 out = Path(args.out)
 out.parent.mkdir(parents=True, exist_ok=True)
-d = pd.DataFrame(rows)
-d.to_csv(out, index=False)
+if args.ckpts:
+    d = pd.DataFrame(rows)
+    d.to_csv(out, index=False)
+else:
+    d = pd.read_csv(out)
+    d['variant'] = d['variant'].fillna('')
+    starts = range(int(d.n.iloc[0]))
 d['label'] = d.apply(lambda r: f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}{r.variant}", axis=1)
 
 
@@ -98,17 +105,18 @@ def ms(v, nd=3):
 
 md = ['# Stride vs error accumulation\n\n',
       f'Open-loop rollouts from {len(starts)} held-out start frames ({args.cache}). ± = s.d. over training seeds.\n',
-      '`fresh` = error of the last call when given the true previous latent; `carried in` = share of the total '
-      'that is not fresh error; `gain` = share of the incoming error that survives one call, over calls 2..n; '
-      '`gain per step` = gain ** (1/k), comparable across strides.\n']
+      '`fresh` = error of the last call when given the true previous latent; `propagated` = error that comes '
+      'from the call\'s input being a prediction; `carried in` = share of the total that is not fresh error; '
+      '`gain` = share of the incoming error that survives one call, over calls 2..n; `gain per step` = '
+      'gain ** (1/k).\n']
 for depth in (8, 40):
     sub = d[d.depth <= depth]
     labels = [lab for lab, g in sub.groupby('label', sort=False) if (g.depth == depth).any()]
     if not labels:
         continue
     md.append(f'\n## Decomposition at depth {depth} env steps\n')
-    md.append('| model | calls | total MSE | fresh (last call) | carried in | gain per call | gain per step |\n'
-              '|---|---|---|---|---|---|---|\n')
+    md.append('| model | calls | total MSE | fresh (last call) | propagated | carried in | gain per call | '
+              'gain per step |\n|---|---|---|---|---|---|---|---|\n')
     for lab in labels:
         g = sub[sub.label == lab]
         k = int(g.k.iloc[0])
@@ -116,9 +124,10 @@ for depth in (8, 40):
         for _, s in g.groupby('seed'):
             last, later = s[s.depth == depth].iloc[0], s[s.calls > 1]
             gain = later.propagated.sum() / later.incoming.sum() if len(later) else float('nan')
-            per.append((last.total, last.fresh, 1 - last.fresh / last.total, gain, gain ** (1 / k)))
+            per.append((last.total, last.fresh, max(1 - last.fresh / last.total, 0.0), gain, gain ** (1 / k), last.propagated))
         per = np.array(per)
-        md.append(f'| {lab} | {depth // k} | {ms(per[:, 0])} | {ms(per[:, 1])} | {ms(100 * per[:, 2], 0)}% | '
+        md.append(f'| {lab} | {depth // k} | {ms(per[:, 0])} | {ms(per[:, 1])} | {ms(per[:, 5])} | '
+                  f'{ms(100 * per[:, 2], 0)}% | '
                   f'{ms(per[:, 3], 2)} | {ms(per[:, 4], 3)} |\n')
 
 if args.openloop and Path(args.openloop).exists():

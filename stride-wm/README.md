@@ -60,12 +60,13 @@ Optional scale-up to 16×16 patches (only with hours to spare; not in the defaul
    strides with default and with equal-span training.
 2. *Error carry-over decomposition* (`scripts/eval_compounding.py`, no training needed). Each call's error
    is split into fresh error (the call given the true previous latent) and propagated error (the part
-   that comes from its input being a prediction), and a gain: the share of incoming error that survives
-   a call, also expressed per env step so strides can be compared. Equal per-step gain across strides
-   means the models carry errors forward equally well and coarse strides win only by injecting fresh
-   error less often.
+   that comes from its input being a prediction). If the coarse strides' advantage sits in the
+   propagated part while their fresh error is equal or worse, they win by chaining fewer calls.
 
-The decomposition on the 18 laptop checkpoints is in `results_mac/compounding.md`.
+Laptop result (`results_mac/compounding.md`, 18 checkpoints, 1,007 held-out starts, depth 40): fresh error
+per call rises with stride (k=1 0.113, k=8 0.148) while propagated error falls (k=1 0.383, k=8 0.084). The
+whole advantage of coarse strides is in the propagated part; per call they predict slightly worse. This is
+an accounting of where the error sits, not an intervention: the equal-span ablation is the causal test.
 
 **Planning cost (`cost`, `plan8`).** On true latents the original latent-MSE cost ranks frames by arm
 distance (Spearman ρ 0.83) far better than by cube distance (0.28), so planners are rewarded for matching
