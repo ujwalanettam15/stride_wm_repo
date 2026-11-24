@@ -104,7 +104,13 @@ fi
 
 if want data; then
   stamp data
-  [ -f data/cube_single.h5 ] || run python scripts/collect.py --out data/cube_single.h5 --episodes "$EPISODES" --steps 200
+  # collect into a scratch folder and move it in when done, so a cut-off collection is redone on resume
+  # instead of a half-written file being taken as the dataset
+  if [ ! -f data/cube_single.h5 ]; then
+    run rm -rf data/collect_tmp
+    run python scripts/collect.py --out data/collect_tmp/cube_single.h5 --episodes "$EPISODES" --steps 200
+    run mv data/collect_tmp/cube_single.h5 data/cube_single.h5
+  fi
   # encoder.json is written last, so it marks a finished cache (an interrupted encode leaves z.npy behind)
   [ -f data/cache/encoder.json ] || run python scripts/encode.py --h5 data/cube_single.h5 --out data/cache --pool 2 --n-eval "$N_EVAL" --batch 128
   run python scripts/check_cache.py --cache8 data/cache

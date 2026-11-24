@@ -119,6 +119,12 @@ def row_key(r):  # rows written before --cost existed planned with the latent co
 
 done = set()
 if Path(args.out).exists():
+    # A job killed mid-write leaves a last line without its newline. Drop it, or the next row would be
+    # appended onto it and both would be unreadable.
+    raw = Path(args.out).read_bytes()
+    if raw and not raw.endswith(b'\n'):
+        Path(args.out).write_bytes(raw[: raw.rfind(b'\n') + 1])
+        print(f'dropped a half-written last row in {args.out}', flush=True)
     done = {row_key(json.loads(x)) for x in open(args.out) if x.strip()}
     print(f'{len(done)} rows already in {args.out}; matching runs are skipped', flush=True)
 for path in args.ckpts:

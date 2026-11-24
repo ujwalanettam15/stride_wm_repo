@@ -115,5 +115,9 @@ for step in range(1, args.steps + 1):
         run, n_run = 0.0, 0
 
 Path(args.out).mkdir(parents=True, exist_ok=True)
+# Write to a temporary name, then rename: a job killed mid-save leaves only the .tmp file, never a truncated
+# checkpoint that the run scripts would skip as finished on resume.
+ckpt = Path(args.out) / f'{name}.pt'
 torch.save(dict(model_kw=model_kw, state=model.state_dict(), act_mean=mu, act_std=sd, cfg=vars(args),
-                log=log, chunk_nn=chunk_nn), Path(args.out) / f'{name}.pt')
+                log=log, chunk_nn=chunk_nn), ckpt.with_suffix('.pt.tmp'))
+ckpt.with_suffix('.pt.tmp').replace(ckpt)
