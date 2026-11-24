@@ -61,6 +61,13 @@ if [ "$DRY_RUN" != 1 ]; then
   python -m pip freeze > "${LOG%.log}_packages.txt" 2>/dev/null || true   # exact package versions of this run
 fi
 
+# Stop if no GPU is visible: the scripts fall back to the CPU silently, which would spend the whole
+# allocation on a fraction of the work. Usual causes: the session/job was requested without a GPU, or the
+# container was started without --nv. ALLOW_CPU=1 overrides (e.g. to run only the `cost` stage).
+if [ "$DRY_RUN" != 1 ] && [ "${ALLOW_CPU:-0}" != 1 ]; then
+  python -c "import sys, torch; sys.exit(0 if torch.cuda.is_available() else 'No CUDA GPU visible. Check that the session or job has a GPU and that the container was started with --nv. ALLOW_CPU=1 overrides.')"
+fi
+
 T_START=$(date +%s)
 stamp() { echo "== $(date '+%F %T') [+$(( ($(date +%s) - T_START) / 60 )) min] $*  [free disk: $(df -h . | awk 'NR==2{print $4}')]"; }
 run() { echo "+ $*"; [ "$DRY_RUN" = 1 ] || "$@"; }
