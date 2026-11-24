@@ -68,6 +68,17 @@ if [ "$DRY_RUN" != 1 ] && [ "${ALLOW_CPU:-0}" != 1 ]; then
   python -c "import sys, torch; sys.exit(0 if torch.cuda.is_available() else 'No CUDA GPU visible. Check that the session or job has a GPU and that the container was started with --nv. ALLOW_CPU=1 overrides.')"
 fi
 
+# MuJoCo renders through EGL on the GPU. A container started with --nv gets NVIDIA's EGL library but may lack
+# the small vendor file that tells EGL where it is (NYU Torch's code-server image: "Cannot initialize a
+# headless EGL display"). Write one and point EGL at it, unless the system already has one or it is set.
+if [ "$DRY_RUN" != 1 ] && [ "$(uname)" = Linux ] && [ -z "${__EGL_VENDOR_LIBRARY_FILENAMES:-}" ] \
+   && ! ls /usr/share/glvnd/egl_vendor.d/*nvidia* /etc/glvnd/egl_vendor.d/*nvidia* >/dev/null 2>&1; then
+  echo '{"file_format_version":"1.0.0","ICD":{"library_path":"libEGL_nvidia.so.0"}}' > "$HOME/nvidia_egl.json"
+  export __EGL_VENDOR_LIBRARY_FILENAMES="$HOME/nvidia_egl.json"
+  echo "EGL: no NVIDIA vendor file in the system, using $__EGL_VENDOR_LIBRARY_FILENAMES"
+fi
+[ "$(uname)" = Linux ] && export MUJOCO_GL=${MUJOCO_GL:-egl}   # headless; macOS renders natively
+
 T_START=$(date +%s)
 stamp() { echo "== $(date '+%F %T') [+$(( ($(date +%s) - T_START) / 60 )) min] $*  [free disk: $(df -h . | awk 'NR==2{print $4}')]"; }
 run() { echo "+ $*"; [ "$DRY_RUN" = 1 ] || "$@"; }
