@@ -26,6 +26,12 @@ Full results in "Failure and error analysis" and
   decomposition (`scripts/eval_compounding.py`, `stride/compound.py`), candidate planning costs and an
   offline check that picks one before any planning run (`scripts/fit_cost.py`, `eval_plan.py --cost`),
   resumable planning, `--tf32`, and two pre-flight checks (`scripts/check_cache.py`, `scripts/check_port.py`).
+- **Second A100 run: why planning fails.** `run_a100_2.sh` (section below). New: the same CEM planner with the
+  simulator as its model (`scripts/eval_oracle.py`, `stride/planning.py: SimCost`), planning toward closer goals
+  and with a 9x search budget, and seeds 1-2 for the single-seed comparisons. Pair selection and resuming moved
+  to `stride/planning.py` so both planners use identical pairs (checked: same pairs and rows as before);
+  `eval_plan.py` skips a model whose stride does not divide the horizon; reports label the simulator planner
+  and non-default search budgets; `tests/test_planning.py`.
 
 ## Results history (each run has its own folder; nothing is overwritten)
 
@@ -34,7 +40,8 @@ Full results in "Failure and error analysis" and
 | CPU pilot | `results_cpu_pilot/` | 2 CPU cores | 120 episodes, 4×4 patches, 4.9M params, 5k steps, 1–2 seeds | pipeline works end to end |
 | Prelim | `results/` | M1 Pro | 120 episodes, 8×8, 4.9M params, 5k steps, 2 seeds; old planner | 4×4 pooling was not hiding contact detail; old planner had 3 bugs |
 | Full laptop run | `results_mac/` | M1 Pro, ~26 h | 250 episodes, 8×8, 22M params, 20k steps, 3 seeds; fixed planner | E1–E4: coarser stride lower error; encoder tie; no planner beats random; cost tracks the arm. `compounding.md` (added later, same checkpoints): the coarse-stride advantage is all in carried-over error |
-| A100 run | `results_a100/` | 1× A100 | same data and settings as the laptop run | hypothesis tests: equal-span ablation, planning cost, A2–A4 (pending) |
+| A100 run | `results_a100/` | 1× A100, 14.8 h | same settings as the laptop run; episodes regenerated on the cluster (models within 2–5% of the laptop's) | equal-span training halves the stride gap at 40 steps (spread 0.242 → 0.106) but k=8 stays best, and per-call error does not favour coarse strides; a cost that tracks the cube 2× better plans no better than the original or random; residual prediction is worse everywhere; models use their actions; width effects within seed noise |
+| Second A100 run | `results_a100_2/` | 1× A100, ~5–6 h | first run's data and models, plus 12 seed-1/2 models | why planning fails: simulator-as-model planner, closer goals, 9× search; E4 and A2 with 3 seeds (pending) |
 | A100 scale-up (optional) | `results_a100_16x16/` | 1× A100 | 16×16 patches | does it hold at full resolution? (only if hours remain) |
 
 Each run's code is the commit that added its folder (`git log -- <folder>`); A100 logs in
@@ -142,6 +149,42 @@ The `data` stage also runs `scripts/check_render.py`: planning renders its curre
 compares them with goal frames from the dataset (rendered on the laptop). It reports how different the
 cluster's renders are, as a fraction of a one-step change; the laptop that collected the dataset scores 0.09
 (reset-from-state does not reproduce the arm's edges exactly), so only a clearly higher number matters.
+
+## Second A100 run: why planning fails (`run_a100_2.sh`, ~5–6 GPU-hours)
+
+The first A100 run ruled out the planning cost: a cost that tracks the cube twice as well (rank correlation
+0.57 vs 0.30) planned no better than the original or than random actions. It also showed that a model with
+half the prediction error (k=8 vs k=1) plans no better, which points away from the world model. This run tests
+the remaining explanations, most informative first. Each stage skips finished work, so re-running resumes.
+
+| stage | question | what the outcomes mean | est. hours |
+|---|---|---|---|
+| `oracle` | can this planner solve the task with **perfect predictions**? Same CEM, budget, pairs and replanning, but candidates are executed in the simulator and scored by the true cube distance (`eval_oracle.py --cost true_cube`) | fails too → the planner/task setup (search budget, 40-step horizon, a cost that is flat until the gripper has the cube) is the bottleneck, and no world model could pass; succeeds → the learned models are the bottleneck | ~0.3 |
+| `near` | do the models plan better toward **closer goals** (16 and 24 steps)? k = 1, 2, 4, 8, both costs, with replay, random and the simulator planner at each distance | success rises as goals get closer → long-range predictions are too blurry (cube error at 40 steps is 3.5–6.5 cm, the success radius 4 cm) | ~0.7 |
+| `budget` | does **more search** help? k=8 with stable-worldmodel's default budget, 300 samples × 30 iterations (9× the first run's), both costs | success rises → the planner was not searching enough | ~0.4 |
+| `oracle_z` | perfect predictions, **our learned costs**: the simulator planner scores the frame rendered at the goal depth with the latent and probe-cube costs | separates the cost from the model: if this works where the learned models fail, model error is the problem | ~1.5 |
+| `seeds` | seeds 1 and 2 for E4 (chunk vs DINO-WM at k=5) and A2 (embedding width), which the first run trained with seed 0 only (12 models) | turns the single-seed "within noise" results into a 3-seed answer | ~2 |
+| `eval` | open loop for every model, report | – | ~0.5 |
+
+Optional (not in the default stages): `oracle_big`, the simulator planner with the 300 × 30 budget (~2 h). Run it
+only if `oracle` fails, to tell search budget from task difficulty.
+
+`results_a100_2/plan.jsonl` starts as a copy of the first run's planning rows (the same 30 pairs at 40 steps:
+pair selection is deterministic), so `results_a100_2/summary.md` shows old and new planners side by side; open-loop
+tables are recomputed for every model in the `eval` stage.
+
+**On the cluster** (same `stride-wm/` folder as the first run: it needs that run's `data/cache`, `data/cache/cost.pt`
+and `runs8/`), in the terminal where the GPU is visible:
+
+```bash
+git pull
+export HF_HUB_OFFLINE=1 && nohup bash run_a100_2.sh > logs/run2.out 2>&1 &
+```
+
+With SLURM instead of an interactive session: `SCRIPT=run_a100_2.sh sbatch slurm_a100.sbatch`. Useful variables:
+`STAGES="oracle near"` (subset), `WORKERS=8` (simulator-planner processes; default = all CPU cores),
+`ZWORKERS=4` (processes for `oracle_z`, which also render and run DINOv2), `PAIRS=20`, `NEAR="16 24"`,
+`DRY_RUN=1`. Send results back as before (`git add results_a100_2 && git commit ...`, or download the folder).
 
 ## Getting started (step by step)
 

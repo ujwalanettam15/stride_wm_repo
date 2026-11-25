@@ -21,7 +21,10 @@ Changes after the prelim (see README, "Changes to the original design"):
   * --cost picks how the predicted latent is compared with the goal (stride/cost.py): the original
     latent MSE, or a cost fit by scripts/fit_cost.py ('best' = the one it chose). Each row records it.
   * reruns skip (model, cost, pair, budget) rows already in --out, so a job killed at its time limit
-    resumes where it stopped instead of duplicating rows."""
+    resumes where it stopped instead of duplicating rows.
+  * pair selection, row keys and resuming live in stride/planning.py, shared with scripts/eval_oracle.py
+    (the same planner with the simulator as its model), so both plan on exactly the same pairs.
+  * a model whose stride does not divide the horizon is skipped with a message (k=5 at H=16 or 24)."""
 import argparse
 import json
 import sys
@@ -42,6 +45,7 @@ from stride.cost import COSTS, LatentGoalCost, load_score
 from stride.data import Cache
 from stride.encoder import encode, load_encoder
 from stride.model import default_device, enable_tf32, load, variant_tag
+from stride.planning import load_done, row_key, select_pairs
 
 p = argparse.ArgumentParser()
 p.add_argument('--cache', default='data/cache')
@@ -82,51 +86,9 @@ env = make_env(args.fast_render)
 score = load_score(args.cost, args.cost_file or Path(args.cache) / 'cost.pt', args.device)
 print(f'planning cost: {score.kind}', flush=True)
 
-
-def solved_without_planning(t0, d):
-    """True if holding still (zero action) already brings the cube to the goal, e.g. a dropped
-    cube landing on it. Such pairs test the dynamics, not the planner, so they are skipped."""
-    env.reset(options={'state': np.r_[m['qpos'][t0], m['qvel'][t0]]})
-    for _ in range(2 * d):
-        info = env.step(np.zeros(5))[-1]
-        if np.linalg.norm(info['privileged/block_0_pos'] - m['cube_pos'][t0 + d]) <= 0.04:
-            return True
-    return False
-
-
-rng = np.random.default_rng(args.seed)
-pairs = []
-for d in offsets:
-    t0 = c.starts('eval', d)
-    t0 = t0[np.linalg.norm(m['cube_pos'][t0 + d] - m['cube_pos'][t0], axis=1) > args.min_start_cm / 100]
-    chosen = []
-    for t in rng.permutation(t0):
-        if len(chosen) == args.pairs:
-            break
-        if not solved_without_planning(int(t), d):
-            chosen.append(int(t))
-    if len(chosen) < args.pairs:
-        print(f'warning: only {len(chosen)} pairs at offset {d} (asked for {args.pairs})', flush=True)
-    pairs += [(d, t) for t in chosen]
-
+pairs = select_pairs(env, c, offsets, args.pairs, args.min_start_cm, args.seed)
 Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-
-
-def row_key(r):  # rows written before --cost existed planned with the latent cost
-    return (r['model'], r.get('cost', 'latent' if r['k'] else ''), r['offset'], r['t0'], r.get('horizon'),
-            r.get('samples'), r.get('iters'), r['seed'])
-
-
-done = set()
-if Path(args.out).exists():
-    # A job killed mid-write leaves a last line without its newline. Drop it, or the next row would be
-    # appended onto it and both would be unreadable.
-    raw = Path(args.out).read_bytes()
-    if raw and not raw.endswith(b'\n'):
-        Path(args.out).write_bytes(raw[: raw.rfind(b'\n') + 1])
-        print(f'dropped a half-written last row in {args.out}', flush=True)
-    done = {row_key(json.loads(x)) for x in open(args.out) if x.strip()}
-    print(f'{len(done)} rows already in {args.out}; matching runs are skipped', flush=True)
+done = load_done(args.out)
 for path in args.ckpts:
     mode = path if path in ('replay', 'random') else 'model'
     if mode == 'replay':
@@ -139,6 +101,9 @@ for path in args.ckpts:
             sys.exit(f"{path} was trained on {ck['model_kw']['num_patches']} patches but {args.cache} has "
                      f'{c.z.shape[1]}: pass the cache the model was trained on')
         k, A = model.k, model.action_dim
+        if H % k:
+            print(f'skip {path}: stride k={k} does not divide the horizon H={H}', flush=True)
+            continue
         mu, sd = ck['act_mean'], ck['act_std']
         info_row = dict(model=Path(path).stem, k=k, arch=ck['model_kw']['arch'],
                         variant=variant_tag(ck['cfg']), seed=ck['cfg']['seed'], cost=score.kind)

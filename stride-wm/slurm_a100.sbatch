@@ -23,7 +23,7 @@ nvidia-smi || true
 # --overlay/--bind options your cluster's container setup uses to SIF_OPTS.
 SIF=${SIF:-}
 SIF_OPTS=${SIF_OPTS:-}
-RUN='source .venv/bin/activate && bash run_a100.sh'
+RUN="source .venv/bin/activate && bash ${SCRIPT:-run_a100.sh}"   # SCRIPT=run_a100_2.sh for the second run
 if [ -n "$SIF" ]; then
   CTR=$(command -v singularity || command -v apptainer || true)
   [ -n "$CTR" ] || { echo "SIF is set but neither singularity nor apptainer is on PATH (try: module load singularity)"; exit 1; }
