@@ -1,0 +1,35 @@
+run_a100.sh | commit 4297ced | host b-19-3 | job none | log results_a100/run_logs/20261124_180709_local.log
+settings: STAGES="setup data base8 compound cost plan8 ablate8" EPISODES=250 STEPS=20000 SEEDS="0 1 2" SPAN=16 PAIRS=30 TF32=1
+== 2026-11-24 18:07:13 [+0 min] setup  [free disk: 2.0T]
++ python -c import torch; print('torch', torch.__version__, '| cuda', torch.cuda.is_available(), '|', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'NO GPU')
+torch 2.7.1+cu126 | cuda True | NVIDIA A100-SXM4-40GB
++ python -c import stable_worldmodel, mujoco; print('stable_worldmodel + mujoco ok')
+stable_worldmodel + mujoco ok
++ python -m pytest -q tests
+.................................                                        [100%]
+33 passed in 7.70s
+== 2026-11-24 18:07:28 [+0 min] data  [free disk: 2.0T]
++ python scripts/collect.py --out data/cube_single.h5 --episodes 250 --steps 200
+Traceback (most recent call last):
+  File "/home/sg9693/stride_wm_repo/stride-wm/scripts/collect.py", line 12, in <module>
+    from stable_worldmodel.envs.ogbench.expert_policy import ExpertPolicy
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/stable_worldmodel/envs/ogbench/__init__.py", line 1, in <module>
+    from .cube_env import CubeEnv
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/stable_worldmodel/envs/ogbench/cube_env.py", line 35, in <module>
+    from dm_control import mjcf
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/dm_control/mjcf/__init__.py", line 18, in <module>
+    from dm_control.mjcf.attribute import Asset
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/dm_control/mjcf/attribute.py", line 28, in <module>
+    from dm_control.mujoco.wrapper import util
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/dm_control/mujoco/__init__.py", line 18, in <module>
+    from dm_control.mujoco.engine import action_spec
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/dm_control/mujoco/engine.py", line 41, in <module>
+    from dm_control import _render
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/dm_control/_render/__init__.py", line 90, in <module>
+    Renderer = import_func()
+               ^^^^^^^^^^^^^
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/dm_control/_render/__init__.py", line 36, in _import_egl
+    from dm_control._render.pyopengl.egl_renderer import EGLContext
+  File "/home/sg9693/stride_wm_repo/stride-wm/.venv/lib64/python3.12/site-packages/dm_control/_render/pyopengl/egl_renderer.py", line 75, in <module>
+    raise ImportError('Cannot initialize a headless EGL display.')
+ImportError: Cannot initialize a headless EGL display.
