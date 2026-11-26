@@ -97,6 +97,7 @@ def plan_episode(pair):
 
 def default_workers(kind):
     n = len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else (os.cpu_count() or 1)
+    n = max(1, n - 2)  # leave cores for the training and model planning that run alongside
     return n if kind == 'true_cube' else min(n, 4)  # rendered costs also share one GPU for DINOv2
 
 
@@ -119,7 +120,7 @@ def main():
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--cost', default='true_cube', choices=('true_cube',) + COSTS + ('best',))
     p.add_argument('--cost-file', default=None, help='fit_cost.py output; default <cache>/cost.pt')
-    p.add_argument('--workers', type=int, default=None, help='parallel episodes; default = available CPUs '
+    p.add_argument('--workers', type=int, default=None, help='parallel episodes; default = available CPUs - 2 '
                    '(at most 4 for the learned costs)')
     p.add_argument('--out', default='results/plan.jsonl')
     p.add_argument('--device', default=default_device())
@@ -151,7 +152,7 @@ def main():
         results = map(plan_episode, todo)
     else:
         for v in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS'):
-            os.environ.setdefault(v, '1')  # one thread per worker process
+            os.environ[v] = '1'  # one thread per worker: the IK solves tiny matrices, extra BLAS threads only contend
         # maxtasksperchild=1: a fresh process per pair, so memory cannot build up across pairs (the env
         # recompiles its MuJoCo model on every reset); start-up takes seconds, a pair takes minutes
         pool = mp.get_context('spawn').Pool(workers, initializer=init, initargs=(cfg,), maxtasksperchild=1)

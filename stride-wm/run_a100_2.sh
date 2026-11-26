@@ -5,36 +5,44 @@
 #
 # What the first run found (results_a100/): no learned model plans better than chance; a model with half the
 # prediction error (k=8 vs k=1) plans no better; a cost that tracks the cube twice as well did not help.
-# Stages, in priority order (each skips work that is already done, so re-running resumes):
+# GPU use: NYU Torch automatically cancels jobs whose GPU sits idle. The simulator planner (`oracle`, and its
+# runs inside `near`) uses only CPU cores, and two sessions were cancelled during it. So `seeds` (12 training runs,
+# ~2-2.5 h of real GPU work) starts in the BACKGROUND right after setup and runs while the planning stages run;
+# `eval` waits for it. Keep `seeds` in STAGES whenever a CPU-only stage runs (or run those on a CPU-only node with
+# ALLOW_CPU=1: the simulator planner needs no GPU).
+# Stages (each skips work that is already done, so re-running resumes):
 #   setup     versions, GPU, unit tests, first-run inputs present                         minutes
+#   seeds     [background] seeds 1 and 2 for the k=5 architecture comparison (E4) and     ~2-2.5 h
+#             the embedding-width ablation (A2), which the first run trained with seed 0 only (12 models).
 #   oracle    the same planner with the SIMULATOR as its model and the true cube          ~0.3 h
 #             distance as its cost (perfect predictions, perfect cost), goals 40 steps away.
 #             EXPLANATION TESTED: "planning fails because of the world model".
 #             If even this fails, the planner/task setup is the bottleneck, not the model.
-#   near      k = 1, 2, 4, 8 planning toward closer goals (16 and 24 steps; both costs),   ~0.7 h
+#   near      k = 1, 2, 4, 8 planning toward closer goals (16 and 24 steps; both costs),   ~1 h
 #             with replay, random and the simulator planner at each distance.
 #             EXPLANATION TESTED: "long-range predictions are too blurry" (cube error at 40 steps
 #             is 3.5-6.5 cm against a 4 cm success radius). Supported if success rises at closer goals.
 #   budget    k=8 with stable-worldmodel's default search budget, 300 samples x 30          ~0.4 h
 #             iterations (9x the first run's), both costs, goals 40 steps away.
 #             EXPLANATION TESTED: "the planner does not search enough".
-#   oracle_z  the simulator planner scored with our learned costs on rendered frames         ~1.5 h
-#             (latent, probe_cube): perfect predictions, our cost. Separates cost from model.
-#   seeds     seeds 1 and 2 for the k=5 architecture comparison (E4) and the embedding-      ~2 h
-#             width ablation (A2), which the first run trained with seed 0 only (12 models).
-#   eval      open loop for every model (adds the new seeds), report                          ~0.5 h
-# Optional, not in the default STAGES: oracle_big = the simulator planner with the 300 x 30 budget (~2 h);
-# worth it only if `oracle` fails, to tell search budget from task difficulty.
+#   eval      waits for `seeds`; open loop for every model (adds the new seeds), report   ~0.5 h
+# Optional, not in the default STAGES:
+#   oracle_z  the simulator planner scored with our learned costs on rendered frames (latent, probe_cube):
+#             perfect predictions, our cost. Several hours at the first attempt's speed (~70 s per plan on the
+#             cluster's cores) and light on the GPU, so run it only if `oracle` succeeds, with fewer pairs
+#             (PAIRS=10 plans the first 10 of the same pairs) and next to GPU work.
+#   oracle_big  the simulator planner with the 300 x 30 budget; only if `oracle` fails, to tell search budget
+#             from task difficulty.
 #
-# Hours are estimates for one A100 with 8 CPU cores; total ~5-6 h. results_a100_2/plan.jsonl starts as a copy
-# of the first run's planning rows (same 30 pairs at 40 steps), so its tables compare old and new side by side.
+# Total ~3 h on one A100 with 12 CPU cores (planning and training overlap). results_a100_2/plan.jsonl starts as a
+# copy of the first run's planning rows (same 30 pairs at 40 steps), so its tables compare old and new side by side.
 set -euo pipefail
 cd "$(dirname "$0")"
 STEPS=${STEPS:-20000}       # training steps per model (as in the first run)
 PAIRS=${PAIRS:-30}          # planning start/goal pairs per condition (as in the first run)
 TF32=${TF32:-1}             # 1 = TF32 tensor cores on the A100; 0 = plain fp32
 DRY_RUN=${DRY_RUN:-0}       # 1 = print the commands without running them
-STAGES=${STAGES:-"setup oracle near budget oracle_z seeds eval"}
+STAGES=${STAGES:-"setup seeds oracle near budget eval"}
 NEAR=${NEAR:-"16 24"}       # closer goal distances (env steps); k = 1, 2, 4, 8 must divide them
 RES=results_a100_2
 T=""; [ "$TF32" = 1 ] && T="--tf32"
@@ -129,6 +137,39 @@ if want setup; then
   run python -c "import os; n = len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count(); print('CPU cores for the simulator planner:', n)"
 fi
 
+# Seeds 1 and 2 for E4 and A2. Real GPU work, run in the background so the GPU stays busy while the simulator
+# planner (CPU only) runs: NYU Torch cancels jobs whose GPU sits idle. `eval` waits for it.
+seeds_stage() {
+  for s in 1 2; do
+    train "dinowm_k5_s$s" --cache data/cache --arch dinowm --k 5 --seed "$s"
+    train "chunk_k5_s$s" --cache data/cache --arch chunk --k 5 --seed "$s"
+    train "dinowm_k5-e64_s$s" --cache data/cache --arch dinowm --k 5 --dinowm-emb 64 --seed "$s"
+    train "chunk_k5-emb10_s$s" --cache data/cache --arch chunk --k 5 --emb-dim 10 --seed "$s"
+    train "chunk_k8-emb32_s$s" --cache data/cache --arch chunk --k 8 --emb-dim 32 --seed "$s"
+    train "chunk_k8-emb128_s$s" --cache data/cache --arch chunk --k 8 --emb-dim 128 --seed "$s"
+  done
+}
+SEEDS_PID=""; SEEDS_LOG=""
+if want seeds; then
+  if [ "$DRY_RUN" = 1 ]; then
+    stamp "seeds (in a real run: in the background, next to the planning stages)"; seeds_stage
+  else
+    SEEDS_LOG="${LOG%.log}_seeds.log"
+    stamp "seeds: 12 training runs in the BACKGROUND (keeps the GPU busy while the simulator planner uses the CPU); log $SEEDS_LOG"
+    seeds_stage > "$SEEDS_LOG" 2>&1 &
+    SEEDS_PID=$!
+  fi
+elif want oracle || want near || want oracle_z || want oracle_big; then
+  echo "WARNING: no 'seeds' in STAGES, so nothing uses the GPU while the simulator planner runs on the CPU."
+  echo "         NYU Torch cancels jobs whose GPU sits idle. Add 'seeds' (it skips finished models) or use a CPU node."
+fi
+wait_seeds() {
+  [ -n "$SEEDS_PID" ] || return 0
+  stamp "waiting for the background training (log $SEEDS_LOG)"
+  if wait "$SEEDS_PID"; then SEEDS_PID=""; stamp "background training finished"
+  else echo "background training failed: see $SEEDS_LOG"; exit 1; fi
+}
+
 if want oracle; then
   stamp "oracle: simulator as model, true cube distance, goals 40 steps away"
   run python scripts/eval_oracle.py --cache data/cache --horizon 40 --cost true_cube $BUDGET $W --out "$RES/plan.jsonl"
@@ -171,19 +212,8 @@ if want oracle_big; then
   report
 fi
 
-if want seeds; then
-  stamp "seeds: seeds 1 and 2 for E4 (k=5 architectures) and A2 (embedding width)"
-  for s in 1 2; do
-    train "dinowm_k5_s$s" --cache data/cache --arch dinowm --k 5 --seed "$s"
-    train "chunk_k5_s$s" --cache data/cache --arch chunk --k 5 --seed "$s"
-    train "dinowm_k5-e64_s$s" --cache data/cache --arch dinowm --k 5 --dinowm-emb 64 --seed "$s"
-    train "chunk_k5-emb10_s$s" --cache data/cache --arch chunk --k 5 --emb-dim 10 --seed "$s"
-    train "chunk_k8-emb32_s$s" --cache data/cache --arch chunk --k 8 --emb-dim 32 --seed "$s"
-    train "chunk_k8-emb128_s$s" --cache data/cache --arch chunk --k 8 --emb-dim 128 --seed "$s"
-  done
-fi
-
 if want eval; then
+  wait_seeds
   stamp "eval: open loop for every model"
   run python scripts/eval_openloop.py --cache data/cache --ckpts runs8/*.pt --horizon 40 --every 2 --batch 128 \
     --out "$RES/openloop_main.csv" $T
@@ -200,4 +230,5 @@ pd.concat(parts).to_csv('$RES/openloop.csv', index=False)"
   report
 fi
 
+wait_seeds
 stamp DONE
