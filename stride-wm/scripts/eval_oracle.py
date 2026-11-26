@@ -152,7 +152,9 @@ def main():
     else:
         for v in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS'):
             os.environ.setdefault(v, '1')  # one thread per worker process
-        pool = mp.get_context('spawn').Pool(workers, initializer=init, initargs=(cfg,))
+        # maxtasksperchild=1: a fresh process per pair, so memory cannot build up across pairs (the env
+        # recompiles its MuJoCo model on every reset); start-up takes seconds, a pair takes minutes
+        pool = mp.get_context('spawn').Pool(workers, initializer=init, initargs=(cfg,), maxtasksperchild=1)
         results = pool.imap_unordered(plan_episode, todo)
     for row in results:
         with open(args.out, 'a') as f:

@@ -71,6 +71,28 @@ if [ "$DRY_RUN" != 1 ] && [ "$(uname)" = Linux ] && [ -z "${__EGL_VENDOR_LIBRARY
 fi
 [ "$(uname)" = Linux ] && export MUJOCO_GL=${MUJOCO_GL:-egl}
 
+# Memory trace. Twice the interactive session ended during this run with nothing in the log, which is what
+# hitting the session's memory limit looks like. Every 30 s, record the session's memory use, its limit and
+# its out-of-memory kill count (Linux cgroup v2) next to the log, so a crash leaves evidence.
+if [ "$DRY_RUN" != 1 ] && [ -r /proc/self/cgroup ]; then
+  CG=/sys/fs/cgroup$(sed -n 's/^0:://p' /proc/self/cgroup); MEMCG=$CG
+  d=$CG; while [ -n "$d" ] && [ "$d" != /sys/fs/cgroup ]; do   # nearest enclosing cgroup with a memory limit
+    v=$(cat "$d/memory.max" 2>/dev/null || true); if [ -n "$v" ] && [ "$v" != max ]; then MEMCG=$d; break; fi; d=${d%/*}
+  done
+  MEMLOG="${LOG%.log}_memory.tsv"
+  echo -e "time\tused_GB\tlimit_GB\toom_kills\tnode_available_GB\tmy_processes" > "$MEMLOG"
+  ( set +eu +o pipefail   # a failed read must not stop the trace
+    while true; do
+      gb() { awk -v b="$1" 'BEGIN { if (b ~ /^[0-9]+$/) printf "%.1f", b / 2^30; else print b }'; }
+      used=$(gb "$(cat "$MEMCG/memory.current" 2>/dev/null || echo NA)"); lim=$(gb "$(cat "$MEMCG/memory.max" 2>/dev/null || echo NA)")
+      oom=$(awk '$1 == "oom_kill" {print $2}' "$MEMCG/memory.events" 2>/dev/null); avail=$(awk '/MemAvailable/ {printf "%.1f", $2 / 2^20}' /proc/meminfo)
+      echo -e "$(date +%T)\t$used\t$lim\t${oom:-NA}\t$avail\t$(ps -u "$(id -u)" --no-headers 2>/dev/null | wc -l)" >> "$MEMLOG"
+      sleep 30
+    done ) &
+  MEMPID=$!; trap 'kill $MEMPID 2>/dev/null || true' EXIT
+  echo "memory: session limit $(awk -v b="$(cat "$MEMCG/memory.max" 2>/dev/null || echo unknown)" 'BEGIN { if (b ~ /^[0-9]+$/) printf "%.1f GB", b / 2^30; else print b }'), trace every 30 s in $MEMLOG"
+fi
+
 T_START=$(date +%s)
 stamp() { echo "== $(date '+%F %T') [+$(( ($(date +%s) - T_START) / 60 )) min] $*  [free disk: $(df -h . | awk 'NR==2{print $4}')]"; }
 run() { echo "+ $*"; [ "$DRY_RUN" = 1 ] || "$@"; }
