@@ -45,3 +45,12 @@ def test_split_starts_from_the_first_run_when_there_is_no_plan_yet(tmp_path):
     call('split', res, '--first', first)
     assert [r['t0'] for r in lines(res / 'plan_main.jsonl')] == [7]
     assert (res / 'plan_sim.jsonl').read_text() == ''
+
+
+def test_merge_includes_per_process_files(tmp_path):
+    (tmp_path / 'plan_main.jsonl').write_text(json.dumps(row('chunk_k1_s0', 'chunk', 1)) + '\n')
+    (tmp_path / 'plan_main_s1.jsonl').write_text(json.dumps(row('chunk_k1_s1', 'chunk', 1)) + '\n')
+    (tmp_path / 'plan_sim.jsonl').write_text(json.dumps(row('oracle_sim', 'oracle', 2, cost='true_cube')) + '\n')
+    (tmp_path / 'plan_main_s1.jsonl.tmp').write_text('not a results file\n')
+    call('merge', tmp_path)
+    assert sorted(r['model'] for r in lines(tmp_path / 'plan.jsonl')) == ['chunk_k1_s0', 'chunk_k1_s1', 'oracle_sim']

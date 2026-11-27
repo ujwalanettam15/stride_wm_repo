@@ -24,7 +24,8 @@ Changes after the prelim (see README, "Changes to the original design"):
     resumes where it stopped instead of duplicating rows.
   * pair selection, row keys and resuming live in stride/planning.py, shared with scripts/eval_oracle.py
     (the same planner with the simulator as its model), so both plan on exactly the same pairs.
-  * a model whose stride does not divide the horizon is skipped with a message (k=5 at H=16 or 24)."""
+  * a model whose stride does not divide the horizon is skipped with a message (k=5 at H=16 or 24).
+  * --cost probe_cube_rand: the cube probe refit with off-expert frames (stride/cost.py; third A100 run)."""
 import argparse
 import json
 import sys
@@ -41,7 +42,7 @@ import gymnasium as gym
 from stable_worldmodel.planning.solver.cem import CEMSolver
 from stable_worldmodel.policy import PlanConfig
 
-from stride.cost import COSTS, LatentGoalCost, load_score
+from stride.cost import ALL_COSTS, LatentGoalCost, cost_file, load_score
 from stride.data import Cache
 from stride.encoder import encode, load_encoder
 from stride.model import default_device, enable_tf32, load, variant_tag
@@ -63,9 +64,10 @@ p.add_argument('--iters', type=int, default=30)
 p.add_argument('--topk', type=int, default=30)
 p.add_argument('--fast-render', action='store_true')
 p.add_argument('--seed', type=int, default=0)
-p.add_argument('--cost', default='latent', choices=COSTS + ('best',),
+p.add_argument('--cost', default='latent', choices=ALL_COSTS + ('best',),
                help="planning cost (stride/cost.py); 'best' = the one scripts/fit_cost.py chose")
-p.add_argument('--cost-file', default=None, help='fit_cost.py output; default <cache>/cost.pt')
+p.add_argument('--cost-file', default=None, help='default <cache>/cost.pt (fit_cost.py), or <cache>/cost_rand.pt '
+               'for probe_cube_rand (fit_probe_rand.py)')
 p.add_argument('--tf32', action='store_true', help='TF32 matmuls on CUDA (A100: ~2x faster)')
 p.add_argument('--out', default='results/plan.jsonl')
 p.add_argument('--device', default=default_device())
@@ -83,7 +85,7 @@ mu_a, sd_a = c.action_stats()
 enc_cfg = json.loads((Path(args.cache) / 'encoder.json').read_text())  # encode frames like the cache
 enc = load_encoder(enc_cfg['encoder']).to(args.device)
 env = make_env(args.fast_render)
-score = load_score(args.cost, args.cost_file or Path(args.cache) / 'cost.pt', args.device)
+score = load_score(args.cost, cost_file(args.cache, args.cost, args.cost_file), args.device)
 print(f'planning cost: {score.kind}', flush=True)
 
 pairs = select_pairs(env, c, offsets, args.pairs, args.min_start_cm, args.seed)

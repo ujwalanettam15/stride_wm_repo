@@ -34,6 +34,11 @@ Full results in "Failure and error analysis" and
   and non-default search budgets; `tests/test_planning.py`. Later: submitted as a batch job (`submit_a100_2.sh`),
   simulator stages in the background next to the GPU stages (NYU Torch cancels jobs under 10% GPU use), one
   planning file per writer (`scripts/plan_log.py`, `tests/test_plan_log.py`), GPU use in the trace.
+- **Third A100 run: fix the cost, then plan again.** `run_a100_3.sh`, submitted with `submit_a100_3.sh` (section
+  below). New: frames from random and noisy actions with their true state (`scripts/collect_rand.py`), the cube probe
+  refit on them, linear or a small MLP, checked on held-out frames before planning (`scripts/fit_probe_rand.py`), and
+  the cost that uses it (`--cost probe_cube_rand`, parameters in `<cache>/cost_rand.pt`; a cost file holding the
+  wrong probe is refused). `plan_log.py merge` also reads per-process files; `submit_a100_2.sh` takes `SCRIPT=`.
 
 ## Results history (each run has its own folder; nothing is overwritten)
 
@@ -44,6 +49,7 @@ Full results in "Failure and error analysis" and
 | Full laptop run | `results_mac/` | M1 Pro, ~26 h | 250 episodes, 8×8, 22M params, 20k steps, 3 seeds; fixed planner | E1–E4: coarser stride lower error; encoder tie; no planner beats random; cost tracks the arm. `compounding.md` (added later, same checkpoints): the coarse-stride advantage is all in carried-over error |
 | A100 run | `results_a100/` | 1× A100, 14.8 h | same settings as the laptop run; episodes regenerated on the cluster (models within 2–5% of the laptop's) | equal-span training halves the stride gap at 40 steps (spread 0.242 → 0.106) but k=8 stays best, and per-call error does not favour coarse strides; a cost that tracks the cube 2× better plans no better than the original or random; residual prediction is worse everywhere; models use their actions; width effects within seed noise |
 | Second A100 run | `results_a100_2/` | 1× A100, 4 sessions (last: a 46 min batch job) | first run's data and models, plus 12 seed-1/2 models | why planning fails: with perfect predictions the planner solves 23/30 using the true cube distance, but only 2/10 using our learned costs (7/10 true cost on the same pairs), so **the learned cost is the bottleneck**; closer goals and 9× search do not help; E4 tie and width effects hold over 3 seeds |
+| Third A100 run | `results_a100_3/` | 1× A100, ~1.5 h batch job | second run's data and models; cube probe refit on random/noisy-action frames | does a cost the planner cannot fool restore planning with perfect predictions, and does stride then matter? (in progress) |
 | A100 scale-up (optional) | `results_a100_16x16/` | 1× A100 | 16×16 patches | does it hold at full resolution? (only if hours remain) |
 
 Each run's code is the commit that added its folder (`git log -- <folder>`); A100 logs in
@@ -220,6 +226,40 @@ variables (passed to the job): `STAGES="near budget eval near_oracle"` (subset),
 default = CPU cores − 4), `ZWORKERS`, `ZPAIRS=10`, `PAIRS=30`, `NEAR="16 24"`, `TIME=6:00:00`, `DRY_RUN=1`. Running it
 in an interactive terminal still works (`nohup bash run_a100_2.sh > logs/run2.out 2>&1 &` inside the container),
 but ends with the session. Send results back as before (download the folder).
+
+## Third A100 run: fix the cost, then plan again (`run_a100_3.sh`, ~1.5 GPU-hours)
+
+The second run showed the cost is the bottleneck: with perfect predictions the planner solves 7/10 pairs with the
+true cube distance and 2/10 with either learned cost. The likely reason for the probe cost: its probe was fit on
+expert frames only. There the cube rides in the gripper during transport, so cube and arm positions move together
+and a linear probe can place the cube by reading the arm. The planner's candidates move the arm without the cube and
+get scored as if the cube had moved. This run refits the probe on frames where arm and cube move independently,
+checks it before any planning, then plans with it.
+
+| stage | where | question | what the outcomes mean | est. |
+|---|---|---|---|---|
+| `old` | GPU, background from the start | k = 1, 2, 4, 8, seeds 1 and 2, original probe cost | with seed 0 from the second run: a 3-seed baseline for the comparison below | ~45 min |
+| `rand_data` | GPU + CPU | 3,000 training and 600 held-out start frames; 40 steps of random, held-random or noisy-expert actions; frames after 8, 16, ..., 40 steps with their true cube and arm state (`collect_rand.py` → `data/cache_rand/`) | – | ~10 min |
+| `fit` | GPU | refit the cube probe on expert + off-expert frames: linear on the 4×4 and 8×8 grids and a small MLP; the lowest held-out off-expert cube error is kept (rule fixed before planning). `cost_rand_check.md` compares old and new probes on held-out expert frames, off-expert frames, frames with the arm far from the cube, and the cube rank correlation over planner-like candidates | the old probe much worse off-expert → it was being fooled; the refit closes the gap → a cost worth planning with | ~5 min |
+| `oracle_r` | background | perfect predictions + the refit probe, first `ZPAIRS=20` pairs (the first 10 are the second run's `oracle_z` pairs) | near 7/10 → the cost is fixed; still ~2/10 → probing DINOv2 features is not precise enough to plan with | ~1 h |
+| `new` | GPU | k = 1, 2, 4, 8 × seeds 0, 1, 2 with the refit probe, one process per seed side by side | success rises above the old cost → the learned models plan once the cost works; differences between k → stride matters for planning | ~45 min |
+
+All planning uses the second run's 30 pairs at 40 steps and search budget (100 × 10). Rows start from
+`results_a100_2/plan.jsonl`, so `results_a100_3/summary.md` shows old and new costs side by side; each planning
+process writes its own `plan_main_<tag>.jsonl` / `plan_sim.jsonl`. GPU use: planning processes run side by side from
+the first minute, and the 2-hour average is printed every 10 minutes.
+
+**On the cluster** (from a GPU session as before; `results_a100_2/` is now in git, so move the cluster's own copy away
+first, once):
+
+```bash
+ssh ${SLURMD_NODENAME:-$HOSTNAME}
+cd ~/stride_wm_repo/stride-wm && [ -d results_a100_2 ] && ! git ls-files --error-unmatch results_a100_2/summary.md >/dev/null 2>&1 && mv results_a100_2 ~/results_a100_2_backup; rm -f results_a100_2.tar.gz; git pull --rebase && bash submit_a100_3.sh
+```
+
+Then the session can be closed. Watch with `squeue -u $USER` and `tail -f logs/stride-a100-3-<jobid>.out`. Variables:
+`STAGES`, `PAIRS=30`, `ZPAIRS=20`, `RSTARTS=3000`, `REVAL=600`, `SEEDS_NEW="0 1 2"`, `SEEDS_OLD="1 2"`, `TIME=4:00:00`,
+`DRY_RUN=1`.
 
 ## Getting started (step by step)
 

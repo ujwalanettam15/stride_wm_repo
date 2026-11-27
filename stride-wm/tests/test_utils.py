@@ -107,6 +107,31 @@ def test_probe_scores_compare_decoded_cube_and_end_effector_positions():
     assert torch.allclose(GoalScore('probe_cube_ee', params)(z, g), torch.tensor([25.0]))
 
 
+def test_refit_probe_file_is_never_mixed_up_with_the_expert_only_one(tmp_path):
+    torch.save(dict(chosen='probe_cube', **_probe_params()), tmp_path / 'cost.pt')
+    torch.save(dict(chosen='probe_cube_rand', robust=True, **_probe_params()), tmp_path / 'cost_rand.pt')
+    assert load_score('probe_cube_rand', tmp_path / 'cost_rand.pt').kind == 'probe_cube_rand'
+    assert load_score('best', tmp_path / 'cost_rand.pt').kind == 'probe_cube_rand'
+    for kind, f in (('probe_cube_rand', 'cost.pt'), ('probe_cube', 'cost_rand.pt')):
+        with pytest.raises(ValueError, match='probe but cost'):
+            load_score(kind, tmp_path / f)
+
+
+def test_mlp_probe_matches_its_layers():
+    g = torch.Generator().manual_seed(0)
+    D, grid = 6, 2
+    layers = [(torch.randn(grid * grid * D, 5, generator=g), torch.randn(5, generator=g)),
+              (torch.randn(5, 11, generator=g), torch.randn(11, generator=g))]
+    pr = dict(mx=torch.randn(grid * grid * D, generator=g), sx=torch.rand(grid * grid * D, generator=g) + 0.5,
+              my=torch.randn(11, generator=g), sy=torch.rand(11, generator=g) + 0.5, layers=layers, grid=grid)
+    s = GoalScore('probe_cube_rand', dict(probe=pr))
+    z = torch.randn(3, 4, D, generator=g)
+    h = torch.relu(((z.reshape(3, -1) - pr['mx']) / pr['sx']) @ layers[0][0] + layers[0][1])
+    y = (h @ layers[1][0] + layers[1][1]) * pr['sy'] + pr['my']
+    assert torch.allclose(s.probe(z), y, atol=1e-5)
+    assert torch.allclose(s(z, z.flip(0)), ((y[:, :3] - y.flip(0)[:, :3]) ** 2).sum(1), atol=1e-4)
+
+
 def test_cost_passes_its_score_through(tmp_path):
     params = dict(patch_w=torch.tensor([0.0, 0.0, 0.0, 1.0]), chosen='patchw', **_probe_params(D=3))
     torch.save(params, tmp_path / 'cost.pt')

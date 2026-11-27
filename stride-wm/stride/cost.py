@@ -12,12 +12,23 @@ patchw and the probe are fit with state labels on training episodes only. At pla
 nothing but latents, like the original cost. Why these exist: on true latents the original cost ranks
 frames by arm distance (Spearman rho 0.83) far better than by cube distance (0.28), so a planner
 minimizing it is rewarded for matching the arm pose whether or not the cube moved.
+
+  probe_cube_rand  probe_cube with the probe refit on expert frames plus frames from random and noisy actions
+                   (scripts/collect_rand.py, scripts/fit_probe_rand.py; parameters in <cache>/cost_rand.pt).
+                   Why: with perfect predictions the planner solved 7/10 pairs with the true cube distance but
+                   2/10 with probe_cube (results_a100_2). On expert frames the cube moves with the gripper, so a
+                   probe fit only there can read the arm to place the cube; the planner's candidates move the arm
+                   without the cube and are scored as if the cube had moved.
 """
+from pathlib import Path
+
 import torch
 
 from stride.data import probe_features
 
-COSTS = ('latent', 'patchw', 'probe_cube', 'probe_cube_ee')
+COSTS = ('latent', 'patchw', 'probe_cube', 'probe_cube_ee')  # fit and checked by scripts/fit_cost.py (cost.pt)
+ROBUST = ('probe_cube_rand',)  # fit by scripts/fit_probe_rand.py (cost_rand.pt)
+ALL_COSTS = COSTS + ROBUST
 CUBE, EE = slice(0, 3), slice(5, 8)  # columns of stride.data.probe_targets
 
 
@@ -25,18 +36,30 @@ class GoalScore:
     """Maps a predicted latent and a goal latent, both (n, P, D), to a cost per sample, (n,)."""
 
     def __init__(self, kind='latent', params=None, device='cpu'):
-        if kind not in COSTS:
-            raise ValueError(f'unknown cost {kind!r}; choose from {COSTS}')
+        if kind not in ALL_COSTS:
+            raise ValueError(f'unknown cost {kind!r}; choose from {ALL_COSTS}')
         self.kind = kind
         if kind == 'patchw':
             self.w = params['patch_w'].float().to(device)
         elif kind.startswith('probe'):
             pr = params['probe']
             self.grid = pr['grid']
-            self.mx, self.my, self.W = (pr[n].float().to(device) for n in ('mx', 'my', 'W'))
+            self.mx, self.my = pr['mx'].float().to(device), pr['my'].float().to(device)
+            if 'layers' in pr:  # small MLP probe (fit_probe_rand.py): standardized in and out
+                self.sx, self.sy = pr['sx'].float().to(device), pr['sy'].float().to(device)
+                self.layers = [(W.float().to(device), b.float().to(device)) for W, b in pr['layers']]
+            else:
+                self.W, self.layers = pr['W'].float().to(device), None
 
     def probe(self, z):
-        return (probe_features(z, self.grid) - self.mx) @ self.W + self.my
+        f = probe_features(z, self.grid)
+        if self.layers is None:
+            return (f - self.mx) @ self.W + self.my
+        h = (f - self.mx) / self.sx
+        for W, b in self.layers[:-1]:
+            h = torch.relu(h @ W + b)
+        W, b = self.layers[-1]
+        return (h @ W + b) * self.sy + self.my
 
     def __call__(self, z, g):
         if self.kind == 'latent':
@@ -53,12 +76,23 @@ class GoalScore:
         return d
 
 
+def cost_file(cache, kind, path=None):
+    """The parameter file for `kind` unless `path` is given: <cache>/cost_rand.pt for the refit probe,
+    <cache>/cost.pt (fit_cost.py) for the others."""
+    return str(path) if path else str(Path(cache) / ('cost_rand.pt' if kind in ROBUST else 'cost.pt'))
+
+
 def load_score(kind, path, device='cpu'):
-    """GoalScore for `kind`; 'best' reads the cost fit_cost.py chose. Only 'latent' needs no file."""
+    """GoalScore for `kind`; 'best' reads the cost the file chose. Only 'latent' needs no file."""
     if kind == 'latent':
         return GoalScore('latent')
     params = torch.load(path, map_location='cpu', weights_only=False)
-    return GoalScore(params['chosen'] if kind == 'best' else kind, params, device)
+    kind = params['chosen'] if kind == 'best' else kind
+    if (kind in ROBUST) != bool(params.get('robust')):  # both files hold a 'probe': never plan with the wrong one
+        raise ValueError(f"{path} holds the {'refit' if params.get('robust') else 'expert-only'} probe but cost "
+                         f"{kind!r} needs the {'refit' if kind in ROBUST else 'expert-only'} one: pass "
+                         f"--cost-file <cache>/{'cost_rand.pt' if kind in ROBUST else 'cost.pt'}")
+    return GoalScore(kind, params, device)
 
 
 def nnls(F, y, iters=3000):

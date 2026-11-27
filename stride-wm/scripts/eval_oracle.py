@@ -12,7 +12,7 @@ budget, horizon, replanning interval, action normalization and clipping, success
 Planning acts on raw actions (no stride grouping).
   --cost true_cube   cube distance read from the simulator at the goal depth: perfect predictions and a
                      perfect cost.
-  --cost latent | probe_cube | probe_cube_ee | patchw | best
+  --cost latent | probe_cube | probe_cube_ee | patchw | probe_cube_rand | best
                      the frame rendered at the goal depth, encoded like the cache, scored with that learned
                      cost against the goal latent: perfect predictions, our cost. Separates cost from model.
 Each candidate costs `depth` simulator steps (plus one render for the learned costs), so episodes run in
@@ -102,7 +102,7 @@ def default_workers(kind):
 
 
 def main():
-    from stride.cost import COSTS
+    from stride.cost import ALL_COSTS, cost_file as default_cost_file
     from stride.data import Cache
     from stride.model import default_device
     from stride.planning import load_done, row_key, select_pairs
@@ -118,15 +118,16 @@ def main():
     p.add_argument('--iters', type=int, default=30)
     p.add_argument('--topk', type=int, default=30)
     p.add_argument('--seed', type=int, default=0)
-    p.add_argument('--cost', default='true_cube', choices=('true_cube',) + COSTS + ('best',))
-    p.add_argument('--cost-file', default=None, help='fit_cost.py output; default <cache>/cost.pt')
+    p.add_argument('--cost', default='true_cube', choices=('true_cube',) + ALL_COSTS + ('best',))
+    p.add_argument('--cost-file', default=None, help='default <cache>/cost.pt, or <cache>/cost_rand.pt for '
+                   'probe_cube_rand')
     p.add_argument('--workers', type=int, default=None, help='parallel episodes; default = available CPUs - 2 '
                    '(at most 4 for the learned costs)')
     p.add_argument('--out', default='results/plan.jsonl')
     p.add_argument('--device', default=default_device())
     args = p.parse_args()
 
-    cost_file = args.cost_file or str(Path(args.cache) / 'cost.pt')
+    cost_file = default_cost_file(args.cache, args.cost, args.cost_file)
     kind = args.cost
     if kind == 'best':  # record the cost that fit_cost.py chose, as eval_plan.py does
         kind = torch.load(cost_file, map_location='cpu', weights_only=False)['chosen']

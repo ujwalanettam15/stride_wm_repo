@@ -11,7 +11,8 @@ which would cut off a row the other process is writing at that moment.
       once: divide <res>/plan.jsonl (or, if there is none yet, the first run's rows) between the two files.
       Does nothing when plan_main.jsonl already exists.
   python scripts/plan_log.py merge <res>
-      rebuild <res>/plan.jsonl from the two files, skipping a row that is still being written."""
+      rebuild <res>/plan.jsonl from the two files (and any plan_main_<tag>.jsonl / plan_sim_<tag>.jsonl from planners
+      running side by side), skipping a row that is still being written."""
 import argparse
 import json
 import sys
@@ -61,8 +62,11 @@ def split(res, first=None):
 
 
 def merge(res):
+    """plan.jsonl = plan_main.jsonl + plan_sim.jsonl, plus any plan_main_<tag>.jsonl / plan_sim_<tag>.jsonl written by
+    processes that run at the same time (one file each, for the same reason as above)."""
     res = Path(res)
-    main, sim = read_rows(res / 'plan_main.jsonl'), read_rows(res / 'plan_sim.jsonl')
+    main = [r for f in sorted(res.glob('plan_main*.jsonl')) for r in read_rows(f)]
+    sim = [r for f in sorted(res.glob('plan_sim*.jsonl')) for r in read_rows(f)]
     write_rows(res / 'plan.jsonl', main + sim)
     print(f'{res / "plan.jsonl"}: {len(main)} model/replay/random rows + {len(sim)} simulator-planner rows', flush=True)
 
