@@ -43,7 +43,7 @@ Full results in "Failure and error analysis" and
 | Prelim | `results/` | M1 Pro | 120 episodes, 8×8, 4.9M params, 5k steps, 2 seeds; old planner | 4×4 pooling was not hiding contact detail; old planner had 3 bugs |
 | Full laptop run | `results_mac/` | M1 Pro, ~26 h | 250 episodes, 8×8, 22M params, 20k steps, 3 seeds; fixed planner | E1–E4: coarser stride lower error; encoder tie; no planner beats random; cost tracks the arm. `compounding.md` (added later, same checkpoints): the coarse-stride advantage is all in carried-over error |
 | A100 run | `results_a100/` | 1× A100, 14.8 h | same settings as the laptop run; episodes regenerated on the cluster (models within 2–5% of the laptop's) | equal-span training halves the stride gap at 40 steps (spread 0.242 → 0.106) but k=8 stays best, and per-call error does not favour coarse strides; a cost that tracks the cube 2× better plans no better than the original or random; residual prediction is worse everywhere; models use their actions; width effects within seed noise |
-| Second A100 run | `results_a100_2/` | 1× A100, ~3 h | first run's data and models, plus 12 seed-1/2 models | why planning fails: the simulator-as-model planner solves 23/30 (learned models ~8%), so the model or the learned cost is the bottleneck; closer goals, 9× search, learned cost with perfect predictions, E4 and A2 with 3 seeds (in progress) |
+| Second A100 run | `results_a100_2/` | 1× A100, 4 sessions (last: a 46 min batch job) | first run's data and models, plus 12 seed-1/2 models | why planning fails: with perfect predictions the planner solves 23/30 using the true cube distance, but only 2/10 using our learned costs (7/10 true cost on the same pairs), so **the learned cost is the bottleneck**; closer goals and 9× search do not help; E4 tie and width effects hold over 3 seeds |
 | A100 scale-up (optional) | `results_a100_16x16/` | 1× A100 | 16×16 patches | does it hold at full resolution? (only if hours remain) |
 
 Each run's code is the commit that added its folder (`git log -- <folder>`); A100 logs in
@@ -159,10 +159,23 @@ The first A100 run ruled out the planning cost: a cost that tracks the cube twic
 half the prediction error (k=8 vs k=1) plans no better, which points away from the world model. This run tests
 the remaining explanations, most informative first. Each stage skips finished work, so re-running resumes.
 
-**So far** (three interrupted sessions, rows kept): the planner with the simulator as its model solved **23 of 30**
-pairs at 40 steps (average progress 17.5 cm), against 13/180 and 17/180 for the learned models, 1/30 for random
-actions and 26/30 for expert replay. The planner, search budget and horizon can solve the task when predictions and
-cost are perfect, so the bottleneck is the learned model or the learned cost; `oracle_z` tells which.
+**Results** (`results_a100_2/summary.md`, `failure_analysis.md`; three interrupted sessions, then a batch job):
+
+- With the simulator as its model and the true cube distance as its cost, the planner solved **23 of 30** pairs at
+  40 steps, against 13/180 and 17/180 for the learned models, 1/30 for random actions and 26/30 for expert replay.
+  The planner, search budget and horizon can solve the task.
+- On the first 10 of those pairs, the same planner with perfect predictions but **our learned costs** solved **2/10**
+  with the latent cost and **2/10** with the probe-cube cost, against **7/10** with the true cube distance (expert
+  replay 8/10, random 1/10, learned models 0–2/10). Five pairs went from solved to failed, none the other way, and
+  both costs' successes include a pair random actions also solves. With the latent cost the cube never moved in 5
+  of 10 pairs. **The learned cost is the bottleneck**; whether the learned models also limit planning can only be
+  measured once the cost works (with our cost they match perfect predictions).
+- 9× search (300 × 30) for k=8: 13% and 7% vs 10% and 10%. Closer goals: the learned models stay at 10–17% at 16
+  and 24 steps. The simulator planner does worse there (10/30 and 13/30), probably because those episodes get
+  2 × d steps and a d-step look-ahead, so closer goals are not a fair easier test.
+- Three seeds: chunk vs DINO-WM conditioning at k=5 tie (0.315 vs 0.316 latent MSE at 40 steps); embedding-width
+  differences stay within the seed spread; training on several chained steps lowers the 40-step error at every k.
+- The final batch job ran 46 min at 19% average GPU use (9% in its first 10 minutes, close to the 10% limit).
 
 **GPU use.** NYU Torch cancels a job whose GPU use stays low for 2 hours: below 10% on most nodes, below 50–60% on
 `gl*`/`gh*`/`ga*`/`gr*` nodes ([Torch Slurm docs](https://services.rt.nyu.edu/docs/hpc/submitting_jobs/slurm_submitting_jobs/),
@@ -171,15 +184,15 @@ background trainings finished after ~1.7 h and the simulator planner then ran on
 run in the **background**, next to the GPU stages in the foreground, and the job waits for them at the end. Every
 30 s `*_trace.tsv` next to the log records memory and GPU use; every 10 minutes the log prints the 2-hour average.
 
-| stage | where | question | what the outcomes mean | est. hours |
+| stage | where | question | what the outcomes mean | result |
 |---|---|---|---|---|
-| `seeds` | GPU | seeds 1 and 2 for E4 (chunk vs DINO-WM at k=5) and A2 (embedding width), which the first run trained with seed 0 only (12 models) | turns the single-seed "within noise" results into a 3-seed answer | done |
-| `near` | GPU | do the models plan better toward **closer goals** (16 and 24 steps)? k = 1, 2, 4, 8, both costs, with replay and random at each distance | success rises as goals get closer → long-range predictions are too blurry (cube error at 40 steps is 3.5–6.5 cm, the success radius 4 cm) | ~0.3 per distance (16 done) |
-| `budget` | GPU | does **more search** help? k=8 with stable-worldmodel's default budget, 300 samples × 30 iterations (9× the first run's), both costs | success rises → the planner was not searching enough | ~0.5 |
-| `eval` | GPU | open loop for every model, final report | – | ~0.5 |
-| `oracle` | background | can this planner solve the task with **perfect predictions**? Same CEM, budget, pairs and replanning, but candidates are executed in the simulator and scored by the true cube distance (`eval_oracle.py --cost true_cube`) | fails too → the planner/task setup is the bottleneck; succeeds → the learned models are | done: 23/30 |
-| `near_oracle` | background | the same at the closer goals | reference for `near` | ~0.3 (16 done) |
-| `oracle_z` | background | perfect predictions, **our learned costs**: the simulator planner scores the frame rendered at the goal depth with the latent and the chosen (probe-cube) cost, on the first `ZPAIRS=10` of the same pairs | succeeds → the learned model's predictions are the bottleneck; fails → our cost on DINOv2 features is (too) | ~0.7 |
+| `seeds` | GPU | seeds 1 and 2 for E4 (chunk vs DINO-WM at k=5) and A2 (embedding width), which the first run trained with seed 0 only (12 models) | turns the single-seed "within noise" results into a 3-seed answer | E4 tie and width results hold |
+| `near` | GPU | do the models plan better toward **closer goals** (16 and 24 steps)? k = 1, 2, 4, 8, both costs, with replay and random at each distance | success rises as goals get closer → long-range predictions are too blurry (cube error at 40 steps is 3.5–6.5 cm, the success radius 4 cm) | no: 10–17% at every distance |
+| `budget` | GPU | does **more search** help? k=8 with stable-worldmodel's default budget, 300 samples × 30 iterations (9× the first run's), both costs | success rises → the planner was not searching enough | no: 13% and 7% |
+| `eval` | GPU | open loop for every model, final report | – | done |
+| `oracle` | background | can this planner solve the task with **perfect predictions**? Same CEM, budget, pairs and replanning, but candidates are executed in the simulator and scored by the true cube distance (`eval_oracle.py --cost true_cube`) | fails too → the planner/task setup is the bottleneck; succeeds → the learned models are | 23/30 |
+| `near_oracle` | background | the same at the closer goals | reference for `near` | 10/30 (16), 13/30 (24) |
+| `oracle_z` | background | perfect predictions, **our learned costs**: the simulator planner scores the frame rendered at the goal depth with the latent and the chosen (probe-cube) cost, on the first `ZPAIRS=10` of the same pairs | succeeds → the learned model's predictions are the bottleneck; fails → our cost on DINOv2 features is (too) | fails: 2/10 each (true cost 7/10) |
 
 Optional: `oracle_big`, the simulator planner with the 300 × 30 budget. It uses no GPU; run it next to GPU stages or
 on a CPU-only node with `ALLOW_CPU=1 MUJOCO_GL=disable` (the true-cube planner never renders).
