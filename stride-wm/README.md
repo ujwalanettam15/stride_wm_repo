@@ -31,7 +31,9 @@ Full results in "Failure and error analysis" and
   and with a 9x search budget, and seeds 1-2 for the single-seed comparisons. Pair selection and resuming moved
   to `stride/planning.py` so both planners use identical pairs (checked: same pairs and rows as before);
   `eval_plan.py` skips a model whose stride does not divide the horizon; reports label the simulator planner
-  and non-default search budgets; `tests/test_planning.py`.
+  and non-default search budgets; `tests/test_planning.py`. Later: submitted as a batch job (`submit_a100_2.sh`),
+  simulator stages in the background next to the GPU stages (NYU Torch cancels jobs under 10% GPU use), one
+  planning file per writer (`scripts/plan_log.py`, `tests/test_plan_log.py`), GPU use in the trace.
 
 ## Results history (each run has its own folder; nothing is overwritten)
 
@@ -41,7 +43,7 @@ Full results in "Failure and error analysis" and
 | Prelim | `results/` | M1 Pro | 120 episodes, 8×8, 4.9M params, 5k steps, 2 seeds; old planner | 4×4 pooling was not hiding contact detail; old planner had 3 bugs |
 | Full laptop run | `results_mac/` | M1 Pro, ~26 h | 250 episodes, 8×8, 22M params, 20k steps, 3 seeds; fixed planner | E1–E4: coarser stride lower error; encoder tie; no planner beats random; cost tracks the arm. `compounding.md` (added later, same checkpoints): the coarse-stride advantage is all in carried-over error |
 | A100 run | `results_a100/` | 1× A100, 14.8 h | same settings as the laptop run; episodes regenerated on the cluster (models within 2–5% of the laptop's) | equal-span training halves the stride gap at 40 steps (spread 0.242 → 0.106) but k=8 stays best, and per-call error does not favour coarse strides; a cost that tracks the cube 2× better plans no better than the original or random; residual prediction is worse everywhere; models use their actions; width effects within seed noise |
-| Second A100 run | `results_a100_2/` | 1× A100, ~3 h | first run's data and models, plus 12 seed-1/2 models | why planning fails: simulator-as-model planner, closer goals, 9× search; E4 and A2 with 3 seeds (pending) |
+| Second A100 run | `results_a100_2/` | 1× A100, ~3 h | first run's data and models, plus 12 seed-1/2 models | why planning fails: the simulator-as-model planner solves 23/30 (learned models ~8%), so the model or the learned cost is the bottleneck; closer goals, 9× search, learned cost with perfect predictions, E4 and A2 with 3 seeds (in progress) |
 | A100 scale-up (optional) | `results_a100_16x16/` | 1× A100 | 16×16 patches | does it hold at full resolution? (only if hours remain) |
 
 Each run's code is the commit that added its folder (`git log -- <folder>`); A100 logs in
@@ -157,46 +159,54 @@ The first A100 run ruled out the planning cost: a cost that tracks the cube twic
 half the prediction error (k=8 vs k=1) plans no better, which points away from the world model. This run tests
 the remaining explanations, most informative first. Each stage skips finished work, so re-running resumes.
 
-**Keep the GPU busy.** NYU Torch automatically cancels jobs whose GPU sits idle
-([Torch Slurm docs](https://services.rt.nyu.edu/docs/hpc/submitting_jobs/slurm_submitting_jobs/)). The simulator
-planner runs on CPU cores only, and two sessions were cancelled during it. So `seeds` (12 training runs, ~2–2.5 h
-of real GPU work) starts in the background right after `setup` and runs next to the planning stages; `eval` waits
-for it. The script warns if a CPU-only stage is requested without `seeds`. (The simulator planner alone needs no
-GPU: `ALLOW_CPU=1 STAGES="oracle"` on a CPU-only node works too.)
+**So far** (three interrupted sessions, rows kept): the planner with the simulator as its model solved **23 of 30**
+pairs at 40 steps (average progress 17.5 cm), against 13/180 and 17/180 for the learned models, 1/30 for random
+actions and 26/30 for expert replay. The planner, search budget and horizon can solve the task when predictions and
+cost are perfect, so the bottleneck is the learned model or the learned cost; `oracle_z` tells which.
 
-| stage | question | what the outcomes mean | est. hours |
-|---|---|---|---|
-| `seeds` (background) | seeds 1 and 2 for E4 (chunk vs DINO-WM at k=5) and A2 (embedding width), which the first run trained with seed 0 only (12 models) | turns the single-seed "within noise" results into a 3-seed answer | ~2–2.5, overlapping the rows below |
-| `oracle` | can this planner solve the task with **perfect predictions**? Same CEM, budget, pairs and replanning, but candidates are executed in the simulator and scored by the true cube distance (`eval_oracle.py --cost true_cube`) | fails too → the planner/task setup (search budget, 40-step horizon, a cost that is flat until the gripper has the cube) is the bottleneck, and no world model could pass; succeeds → the learned models are the bottleneck | ~0.3 |
-| `near` | do the models plan better toward **closer goals** (16 and 24 steps)? k = 1, 2, 4, 8, both costs, with replay, random and the simulator planner at each distance | success rises as goals get closer → long-range predictions are too blurry (cube error at 40 steps is 3.5–6.5 cm, the success radius 4 cm) | ~1 |
-| `budget` | does **more search** help? k=8 with stable-worldmodel's default budget, 300 samples × 30 iterations (9× the first run's), both costs | success rises → the planner was not searching enough | ~0.4 |
-| `eval` | waits for `seeds`; open loop for every model, report | – | ~0.5 |
+**GPU use.** NYU Torch cancels a job whose GPU use stays low for 2 hours: below 10% on most nodes, below 50–60% on
+`gl*`/`gh*`/`ga*`/`gr*` nodes ([Torch Slurm docs](https://services.rt.nyu.edu/docs/hpc/submitting_jobs/slurm_submitting_jobs/),
+"Low GPU Utilization Policy"). The simulator planner uses no GPU at all. Three sessions were cancelled: the 12
+background trainings finished after ~1.7 h and the simulator planner then ran on its own. Now the simulator stages
+run in the **background**, next to the GPU stages in the foreground, and the job waits for them at the end. Every
+30 s `*_trace.tsv` next to the log records memory and GPU use; every 10 minutes the log prints the 2-hour average.
 
-Optional (not in the default stages):
-- `oracle_z`: perfect predictions, **our learned costs** (the simulator planner scores the frame rendered at the goal
-  depth with the latent and probe-cube costs). It separates the cost from the model, but takes hours at the
-  cluster's speed (~70 s per plan on its cores) and uses the GPU only lightly, so run it only if `oracle` succeeds,
-  with fewer pairs and next to GPU work: `STAGES="seeds oracle_z" PAIRS=10` (the first 10 of the same pairs).
-- `oracle_big`: the simulator planner with the 300 × 30 budget; only if `oracle` fails, to tell search budget from
-  task difficulty.
+| stage | where | question | what the outcomes mean | est. hours |
+|---|---|---|---|---|
+| `seeds` | GPU | seeds 1 and 2 for E4 (chunk vs DINO-WM at k=5) and A2 (embedding width), which the first run trained with seed 0 only (12 models) | turns the single-seed "within noise" results into a 3-seed answer | done |
+| `near` | GPU | do the models plan better toward **closer goals** (16 and 24 steps)? k = 1, 2, 4, 8, both costs, with replay and random at each distance | success rises as goals get closer → long-range predictions are too blurry (cube error at 40 steps is 3.5–6.5 cm, the success radius 4 cm) | ~0.3 per distance (16 done) |
+| `budget` | GPU | does **more search** help? k=8 with stable-worldmodel's default budget, 300 samples × 30 iterations (9× the first run's), both costs | success rises → the planner was not searching enough | ~0.5 |
+| `eval` | GPU | open loop for every model, final report | – | ~0.5 |
+| `oracle` | background | can this planner solve the task with **perfect predictions**? Same CEM, budget, pairs and replanning, but candidates are executed in the simulator and scored by the true cube distance (`eval_oracle.py --cost true_cube`) | fails too → the planner/task setup is the bottleneck; succeeds → the learned models are | done: 23/30 |
+| `near_oracle` | background | the same at the closer goals | reference for `near` | ~0.3 (16 done) |
+| `oracle_z` | background | perfect predictions, **our learned costs**: the simulator planner scores the frame rendered at the goal depth with the latent and the chosen (probe-cube) cost, on the first `ZPAIRS=10` of the same pairs | succeeds → the learned model's predictions are the bottleneck; fails → our cost on DINOv2 features is (too) | ~0.7 |
 
-`results_a100_2/plan.jsonl` starts as a copy of the first run's planning rows (the same 30 pairs at 40 steps:
-pair selection is deterministic), so `results_a100_2/summary.md` shows old and new planners side by side; open-loop
-tables are recomputed for every model in the `eval` stage. Next to each run log, `*_memory.tsv` records the
-session's memory use every 30 s and `*_seeds.log` holds the background training output.
+Optional: `oracle_big`, the simulator planner with the 300 × 30 budget. It uses no GPU; run it next to GPU stages or
+on a CPU-only node with `ALLOW_CPU=1 MUJOCO_GL=disable` (the true-cube planner never renders).
 
-**On the cluster** (same `stride-wm/` folder as the first run: it needs that run's `data/cache`, `data/cache/cost.pt`
-and `runs8/`), in the terminal where the GPU is visible:
+Planning rows go to `results_a100_2/plan_main.jsonl` (GPU stages) and `plan_sim.jsonl` (simulator stages), one file
+per writer, because each planning script drops a half-written last row when it starts, which could cut off a row the
+other process is still writing. `scripts/plan_log.py merge` rebuilds `results_a100_2/plan.jsonl` from both for every
+report; it starts with the first run's rows (the same 30 pairs at 40 steps: pair selection is deterministic), so
+`results_a100_2/summary.md` shows old and new planners side by side. Next to each run log: `*_sim.log` (simulator
+stages) and `*_trace.tsv`.
+
+**On the cluster: submit it as a batch job.** It keeps running when the browser or the VS Code server closes.
+From a GPU session like the earlier ones (same `stride-wm/` folder as the first run), ssh to the node, because
+`sbatch` is not available inside the code-server container, and submit. `submit_a100_2.sh` copies the session's
+account, partition, GPU request, CPU count and memory, so the job lands on the same kind of node, and runs the script
+in the same container (`slurm_a100.sbatch` with `SCRIPT=run_a100_2.sh`):
 
 ```bash
-git pull
-export HF_HUB_OFFLINE=1 && nohup bash run_a100_2.sh > logs/run2.out 2>&1 &
+ssh ${SLURMD_NODENAME:-$HOSTNAME}
+cd ~/stride_wm_repo/stride-wm && git pull --rebase && bash submit_a100_2.sh
 ```
 
-With SLURM instead of an interactive session: `SCRIPT=run_a100_2.sh sbatch slurm_a100.sbatch`. Useful variables:
-`STAGES="seeds oracle near"` (subset; keep `seeds` with CPU-only stages), `WORKERS=8` (simulator-planner processes;
-default = CPU cores − 2), `ZWORKERS=4` (processes for `oracle_z`), `PAIRS=20`, `NEAR="16 24"`, `DRY_RUN=1`. Send
-results back as before (`git add results_a100_2 && git commit ...`, or download the folder).
+Then the session can be closed. Watch with `squeue -u $USER` and `tail -f logs/stride-a100-2-<jobid>.out`. Useful
+variables (passed to the job): `STAGES="near budget eval near_oracle"` (subset), `WORKERS=8` (simulator processes;
+default = CPU cores − 4), `ZWORKERS`, `ZPAIRS=10`, `PAIRS=30`, `NEAR="16 24"`, `TIME=6:00:00`, `DRY_RUN=1`. Running it
+in an interactive terminal still works (`nohup bash run_a100_2.sh > logs/run2.out 2>&1 &` inside the container),
+but ends with the session. Send results back as before (download the folder).
 
 ## Getting started (step by step)
 

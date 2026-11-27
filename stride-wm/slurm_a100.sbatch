@@ -1,6 +1,8 @@
 #!/bin/bash
 # SLURM wrapper for run_a100.sh. Submit from the stride-wm/ folder:
 #   mkdir -p logs && sbatch slurm_a100.sbatch
+# Second run on NYU Torch: use submit_a100_2.sh, which fills in the options below from your session and sets
+# SCRIPT=run_a100_2.sh and SIF (options given to sbatch on the command line replace the #SBATCH lines).
 # Resubmitting the same file resumes: every stage skips work whose output already exists.
 # Adjust the lines marked CHANGE to your cluster (check its docs for the A100 request syntax).
 #SBATCH --job-name=stride-a100
