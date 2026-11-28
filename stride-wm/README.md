@@ -49,7 +49,7 @@ Full results in "Failure and error analysis" and
 | Full laptop run | `results_mac/` | M1 Pro, ~26 h | 250 episodes, 8×8, 22M params, 20k steps, 3 seeds; fixed planner | E1–E4: coarser stride lower error; encoder tie; no planner beats random; cost tracks the arm. `compounding.md` (added later, same checkpoints): the coarse-stride advantage is all in carried-over error |
 | A100 run | `results_a100/` | 1× A100, 14.8 h | same settings as the laptop run; episodes regenerated on the cluster (models within 2–5% of the laptop's) | equal-span training halves the stride gap at 40 steps (spread 0.242 → 0.106) but k=8 stays best, and per-call error does not favour coarse strides; a cost that tracks the cube 2× better plans no better than the original or random; residual prediction is worse everywhere; models use their actions; width effects within seed noise |
 | Second A100 run | `results_a100_2/` | 1× A100, 4 sessions (last: a 46 min batch job) | first run's data and models, plus 12 seed-1/2 models | why planning fails: with perfect predictions the planner solves 23/30 using the true cube distance, but only 2/10 using our learned costs (7/10 true cost on the same pairs), so **the learned cost is the bottleneck**; closer goals and 9× search do not help; E4 tie and width effects hold over 3 seeds |
-| Third A100 run | `results_a100_3/` | 1× A100, ~1.5 h batch job | second run's data and models; cube probe refit on random/noisy-action frames | does a cost the planner cannot fool restore planning with perfect predictions, and does stride then matter? (in progress) |
+| Third A100 run | `results_a100_3/` | 1× A100, 110 min batch job | second run's data and models; cube probe refit on random/noisy-action frames | the refit probe halves the cube error off expert frames and doubles perfect-prediction planning (2/10 → 4/10; 8/20 vs 15/20 for the true cube distance), but the learned models plan no better (32/360 vs 30/360), so **their predictions are now the limit**; stride does not change planning success, and k=8 needs 8× fewer model calls than k=1 |
 | A100 scale-up (optional) | `results_a100_16x16/` | 1× A100 | 16×16 patches | does it hold at full resolution? (only if hours remain) |
 
 Each run's code is the commit that added its folder (`git log -- <folder>`); A100 logs in
@@ -236,13 +236,34 @@ and a linear probe can place the cube by reading the arm. The planner's candidat
 get scored as if the cube had moved. This run refits the probe on frames where arm and cube move independently,
 checks it before any planning, then plans with it.
 
-| stage | where | question | what the outcomes mean | est. |
+**Results** (`results_a100_3/summary.md`, `cost_rand_check.md`, `failure_analysis.md`; one 110 min batch job at
+96–98% average GPU use):
+
+- **The refit probe reads the cube better.** Kept: the MLP on the 8×8 grid. Cube error on held-out off-expert frames
+  3.70 → 1.82 cm (arm > 10 cm from the cube: 3.72 → 1.77; expert frames: 2.37 → 1.54); rank correlation over
+  planner-like candidates 0.64 → 0.70 (latent MSE 0.27). The old probe was partly fooled off expert frames.
+- **With perfect predictions it doubles success.** On the second run's 10 `oracle_z` pairs: **4/10**, against 2/10
+  for the old probe and for the latent cost and 7/10 for the true cube distance. On 20 pairs: **8/20** against
+  15/20; every pair it solves the true cube distance also solves (7 pairs only the true cost solves, none the other
+  way). Better, but still well short of the true cost.
+- **The learned models plan no better with it.** k = 1, 2, 4, 8 over 3 seeds × 30 pairs: 10, 7, 6 and 9 of 90 with
+  the refit probe against 7, 9, 5 and 9 with the old one (32/360 vs 30/360; random actions 1/30). Pair by pair the
+  wins and losses balance (21 vs 19) and the final distance moves by less than 1 cm. The learned models only solve
+  4–5 of the easier pairs. So once the cost is better, **the learned models' predictions are the limit**: their cube
+  error at 40 steps (3.5–6.5 cm) is as large as the 4 cm success radius. A likely reason, not tested here: like the
+  old probe, the models were trained on expert episodes only and have not seen what the planner's off-expert
+  actions do.
+- **Stride:** coarser strides predict better (cube error at 40 steps 6.5 cm for k=1, 3.5 cm for k=8) and need fewer
+  model calls per plan (400 for k=1, 50 for k=8), with no measurable difference in planning success (7–11%).
+  Seconds per plan in this run are inflated by five planners sharing the GPU; compare model calls, not seconds.
+
+| stage | where | question | what the outcomes mean | result |
 |---|---|---|---|---|
-| `old` | GPU, background from the start | k = 1, 2, 4, 8, seeds 1 and 2, original probe cost | with seed 0 from the second run: a 3-seed baseline for the comparison below | ~45 min |
-| `rand_data` | GPU + CPU | 3,000 training and 600 held-out start frames; 40 steps of random, held-random or noisy-expert actions; frames after 8, 16, ..., 40 steps with their true cube and arm state (`collect_rand.py` → `data/cache_rand/`) | – | ~10 min |
-| `fit` | GPU | refit the cube probe on expert + off-expert frames: linear on the 4×4 and 8×8 grids and a small MLP; the lowest held-out off-expert cube error is kept (rule fixed before planning). `cost_rand_check.md` compares old and new probes on held-out expert frames, off-expert frames, frames with the arm far from the cube, and the cube rank correlation over planner-like candidates | the old probe much worse off-expert → it was being fooled; the refit closes the gap → a cost worth planning with | ~5 min |
-| `oracle_r` | background | perfect predictions + the refit probe, first `ZPAIRS=20` pairs (the first 10 are the second run's `oracle_z` pairs) | near 7/10 → the cost is fixed; still ~2/10 → probing DINOv2 features is not precise enough to plan with | ~1 h |
-| `new` | GPU | k = 1, 2, 4, 8 × seeds 0, 1, 2 with the refit probe, one process per seed side by side | success rises above the old cost → the learned models plan once the cost works; differences between k → stride matters for planning | ~45 min |
+| `old` | GPU, background from the start | k = 1, 2, 4, 8, seeds 1 and 2, original probe cost | with seed 0 from the second run: a 3-seed baseline for the comparison below | 7, 9, 5, 9 of 90 (3 seeds) |
+| `rand_data` | GPU + CPU | 3,000 training and 600 held-out start frames; 40 steps of random, held-random or noisy-expert actions; frames after 8, 16, ..., 40 steps with their true cube and arm state (`collect_rand.py` → `data/cache_rand/`) | – | 18,000 frames in 9 min; the cube moved > 2 cm in 25–31% |
+| `fit` | GPU | refit the cube probe on expert + off-expert frames: linear on the 4×4 and 8×8 grids and a small MLP; the lowest held-out off-expert cube error is kept (rule fixed before planning). `cost_rand_check.md` compares old and new probes on held-out expert frames, off-expert frames, frames with the arm far from the cube, and the cube rank correlation over planner-like candidates | the old probe much worse off-expert → it was being fooled; the refit closes the gap → a cost worth planning with | MLP 8×8: off-expert cube error 3.70 → 1.82 cm, rank correlation 0.64 → 0.70 |
+| `oracle_r` | background | perfect predictions + the refit probe, first `ZPAIRS=20` pairs (the first 10 are the second run's `oracle_z` pairs) | near 7/10 → the cost is fixed; still ~2/10 → probing DINOv2 features is not precise enough to plan with | 4/10 (old 2/10, true 7/10); 8/20 (true 15/20) |
+| `new` | GPU | k = 1, 2, 4, 8 × seeds 0, 1, 2 with the refit probe, one process per seed side by side | success rises above the old cost → the learned models plan once the cost works; differences between k → stride matters for planning | 10, 7, 6, 9 of 90: no change, no stride effect |
 
 All planning uses the second run's 30 pairs at 40 steps and search budget (100 × 10). Rows start from
 `results_a100_2/plan.jsonl`, so `results_a100_3/summary.md` shows old and new costs side by side; each planning

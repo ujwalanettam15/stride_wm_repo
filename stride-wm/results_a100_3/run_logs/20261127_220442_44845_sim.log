@@ -1,0 +1,188 @@
+110 rows already in results_a100_3/plan_sim.jsonl; matching runs are skipped
+simulator planner | cost probe_cube_rand | 20 of 20 pairs to plan | 7 workers | budget 100 x 10
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 13019.44it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 19986.11it/s]
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10534.06it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10743.01it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 11611.07it/s]
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10724.05it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 19512.46it/s]
+CEM solve time: 133.2965 seconds
+CEM solve time: 137.5581 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 47865, "success": true, "steps": 3, "final_dist_cm": 1.0676264416337204, "min_dist_cm": 1.0676264416337204, "start_dist_cm": 13.96768248389356, "solves": 1, "solve_sec": 137.55826783180237, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 137.7331 seconds
+CEM solve time: 138.4176 seconds
+CEM solve time: 139.3218 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 49275, "success": true, "steps": 4, "final_dist_cm": 1.7895892364868464, "min_dist_cm": 1.7895892364868464, "start_dist_cm": 17.991659879051266, "solves": 1, "solve_sec": 139.32200264930725, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 143.9922 seconds
+CEM solve time: 145.0809 seconds
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 8478.80it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10515.59it/s]
+CEM solve time: 133.2813 seconds
+CEM solve time: 138.8172 seconds
+CEM solve time: 138.5255 seconds
+CEM solve time: 138.7956 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 42636, "success": true, "steps": 15, "final_dist_cm": 2.8105208390179977, "min_dist_cm": 2.8105208390179977, "start_dist_cm": 29.35531436873257, "solves": 2, "solve_sec": 141.93840396404266, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 142.8518 seconds
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10820.07it/s]
+CEM solve time: 141.9228 seconds
+CEM solve time: 145.6450 seconds
+CEM solve time: 135.3712 seconds
+CEM solve time: 137.9442 seconds
+CEM solve time: 139.0368 seconds
+CEM solve time: 142.3988 seconds
+CEM solve time: 138.6680 seconds
+CEM solve time: 141.7525 seconds
+CEM solve time: 141.0776 seconds
+CEM solve time: 137.5625 seconds
+CEM solve time: 137.8601 seconds
+CEM solve time: 139.8787 seconds
+CEM solve time: 140.7977 seconds
+CEM solve time: 138.3156 seconds
+CEM solve time: 140.1914 seconds
+CEM solve time: 137.7037 seconds
+CEM solve time: 134.6355 seconds
+CEM solve time: 136.8120 seconds
+CEM solve time: 139.0524 seconds
+CEM solve time: 138.7218 seconds
+CEM solve time: 139.4940 seconds
+CEM solve time: 136.9655 seconds
+CEM solve time: 137.5301 seconds
+CEM solve time: 138.5204 seconds
+CEM solve time: 139.1468 seconds
+CEM solve time: 137.5386 seconds
+CEM solve time: 137.1088 seconds
+CEM solve time: 137.2879 seconds
+CEM solve time: 138.4926 seconds
+CEM solve time: 140.0943 seconds
+CEM solve time: 136.7872 seconds
+CEM solve time: 140.0586 seconds
+CEM solve time: 136.9987 seconds
+CEM solve time: 137.4382 seconds
+CEM solve time: 136.1670 seconds
+CEM solve time: 139.1467 seconds
+CEM solve time: 137.8638 seconds
+CEM solve time: 136.3407 seconds
+CEM solve time: 136.6952 seconds
+CEM solve time: 137.0657 seconds
+CEM solve time: 137.4113 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 41422, "success": true, "steps": 57, "final_dist_cm": 3.5219627156592646, "min_dist_cm": 3.5219627156592646, "start_dist_cm": 22.04621071304539, "solves": 8, "solve_sec": 140.09026259183884, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 139.6976 seconds
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10806.44it/s]
+CEM solve time: 138.1218 seconds
+CEM solve time: 139.7820 seconds
+CEM solve time: 135.2141 seconds
+CEM solve time: 137.9722 seconds
+CEM solve time: 140.4798 seconds
+CEM solve time: 137.0571 seconds
+CEM solve time: 141.2390 seconds
+CEM solve time: 139.0396 seconds
+CEM solve time: 138.3994 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 41835, "success": true, "steps": 4, "final_dist_cm": 1.6798607482112604, "min_dist_cm": 1.6798607482112604, "start_dist_cm": 17.922930825966745, "solves": 1, "solve_sec": 138.3995497226715, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10422.20it/s]
+CEM solve time: 136.0673 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 45832, "success": false, "steps": 80, "final_dist_cm": 28.183556683512606, "min_dist_cm": 28.183556676699656, "start_dist_cm": 28.183556939681047, "solves": 10, "solve_sec": 135.707865691185, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10537.98it/s]
+CEM solve time: 137.7156 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 50055, "success": false, "steps": 80, "final_dist_cm": 11.337236130514595, "min_dist_cm": 11.337236130514595, "start_dist_cm": 11.3372361387041, "solves": 10, "solve_sec": 138.15199854373932, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 136.7350 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 49251, "success": false, "steps": 80, "final_dist_cm": 11.70714811847223, "min_dist_cm": 11.70714811847223, "start_dist_cm": 11.707148126243062, "solves": 10, "solve_sec": 138.29672615528108, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 9778.98it/s]
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 12788.21it/s]
+CEM solve time: 137.3735 seconds
+CEM solve time: 137.3182 seconds
+CEM solve time: 139.6961 seconds
+CEM solve time: 140.0870 seconds
+CEM solve time: 139.0995 seconds
+CEM solve time: 135.2381 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 45868, "success": true, "steps": 4, "final_dist_cm": 3.269746382086346, "min_dist_cm": 3.269746382086346, "start_dist_cm": 22.516583573607242, "solves": 1, "solve_sec": 135.23827958106995, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 139.0465 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 45872, "success": true, "steps": 4, "final_dist_cm": 1.2028138731544573, "min_dist_cm": 1.2028138731544573, "start_dist_cm": 20.88597236694534, "solves": 1, "solve_sec": 139.04665613174438, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 138.0233 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 48071, "success": false, "steps": 80, "final_dist_cm": 13.734256758540257, "min_dist_cm": 13.110816784212778, "start_dist_cm": 12.071417348432407, "solves": 10, "solve_sec": 139.185470867157, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 140.2774 seconds
+CEM solve time: 141.4372 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 40419, "success": false, "steps": 80, "final_dist_cm": 21.571686457469646, "min_dist_cm": 21.209360555971294, "start_dist_cm": 33.21646383436061, "solves": 10, "solve_sec": 139.6923276424408, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 9792.39it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 9493.32it/s]
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 6234.08it/s]
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 11794.68it/s]
+CEM solve time: 140.1456 seconds
+CEM solve time: 139.9119 seconds
+CEM solve time: 138.9924 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 44628, "success": false, "steps": 80, "final_dist_cm": 14.292249132396753, "min_dist_cm": 14.292249126570788, "start_dist_cm": 14.292249126951923, "solves": 10, "solve_sec": 138.76012716293334, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 139.2171 seconds
+CEM solve time: 142.5271 seconds
+CEM solve time: 138.6176 seconds
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 9861.15it/s]
+CEM solve time: 137.8786 seconds
+CEM solve time: 146.8597 seconds
+CEM solve time: 146.2873 seconds
+CEM solve time: 136.7491 seconds
+CEM solve time: 139.9723 seconds
+CEM solve time: 138.0661 seconds
+CEM solve time: 134.6939 seconds
+CEM solve time: 136.1284 seconds
+CEM solve time: 146.5697 seconds
+CEM solve time: 148.8007 seconds
+CEM solve time: 137.7334 seconds
+CEM solve time: 139.4821 seconds
+CEM solve time: 136.1388 seconds
+CEM solve time: 138.1427 seconds
+CEM solve time: 136.6379 seconds
+CEM solve time: 142.6918 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 45432, "success": true, "steps": 39, "final_dist_cm": 3.2393006377371565, "min_dist_cm": 3.2393006377371565, "start_dist_cm": 31.560660250187446, "solves": 5, "solve_sec": 143.27093873023986, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10808.44it/s]
+CEM solve time: 145.4927 seconds
+CEM solve time: 123.8743 seconds
+CEM solve time: 134.6735 seconds
+CEM solve time: 139.2142 seconds
+CEM solve time: 137.8913 seconds
+CEM solve time: 138.8245 seconds
+CEM solve time: 127.6563 seconds
+CEM solve time: 134.1759 seconds
+CEM solve time: 130.3223 seconds
+CEM solve time: 137.3638 seconds
+CEM solve time: 140.3631 seconds
+CEM solve time: 139.1156 seconds
+CEM solve time: 133.1901 seconds
+CEM solve time: 135.9710 seconds
+CEM solve time: 112.4610 seconds
+CEM solve time: 129.7164 seconds
+CEM solve time: 125.9221 seconds
+CEM solve time: 138.9395 seconds
+CEM solve time: 118.1330 seconds
+CEM solve time: 140.3834 seconds
+CEM solve time: 133.8519 seconds
+CEM solve time: 132.9696 seconds
+CEM solve time: 135.7406 seconds
+CEM solve time: 133.7522 seconds
+CEM solve time: 128.3440 seconds
+CEM solve time: 123.9588 seconds
+CEM solve time: 112.9676 seconds
+CEM solve time: 137.5656 seconds
+CEM solve time: 136.9247 seconds
+CEM solve time: 135.8287 seconds
+CEM solve time: 130.4593 seconds
+CEM solve time: 121.4016 seconds
+CEM solve time: 134.8916 seconds
+CEM solve time: 136.0799 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 44464, "success": false, "steps": 80, "final_dist_cm": 7.299599292741725, "min_dist_cm": 7.089747411694241, "start_dist_cm": 41.08187197820602, "solves": 10, "solve_sec": 139.4469339132309, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 10712.62it/s]
+CEM solve time: 120.7231 seconds
+CEM solve time: 137.4856 seconds
+CEM solve time: 116.1890 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 46236, "success": false, "steps": 80, "final_dist_cm": 10.964939253210451, "min_dist_cm": 10.964939248160679, "start_dist_cm": 10.964939248160679, "solves": 10, "solve_sec": 131.66138608455657, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 132.1501 seconds
+CEM solve time: 135.7869 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 40818, "success": false, "steps": 80, "final_dist_cm": 6.038731299040859, "min_dist_cm": 4.791518466837189, "start_dist_cm": 10.366450020173627, "solves": 10, "solve_sec": 131.20495233535766, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 4207.02it/s]
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 4186.40it/s]
+CEM solve time: 115.3199 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 42444, "success": false, "steps": 80, "final_dist_cm": 17.90711443403642, "min_dist_cm": 17.75894194778303, "start_dist_cm": 31.687323110311084, "solves": 10, "solve_sec": 133.31501247882844, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 125.1713 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 48856, "success": false, "steps": 80, "final_dist_cm": 6.902954030492042, "min_dist_cm": 6.243510119706278, "start_dist_cm": 29.56514420390323, "solves": 10, "solve_sec": 136.2804932832718, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 3013.28it/s]
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 3150.08it/s]
+CEM solve time: 94.2684 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "probe_cube_rand", "offset": 40, "t0": 43020, "success": false, "steps": 80, "final_dist_cm": 31.54454608148155, "min_dist_cm": 31.544546073079992, "start_dist_cm": 31.544546073633807, "solves": 10, "solve_sec": 126.2521707057953, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
