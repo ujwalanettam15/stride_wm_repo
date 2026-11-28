@@ -1,0 +1,150 @@
+run_a100_2.sh | commit 26bce77 | host b-19-134 | job none | log results_a100_2/run_logs/20261126_173905_local.log
+settings: STAGES="setup oracle near budget oracle_z seeds eval" STEPS=20000 PAIRS=30 NEAR="16 24" TF32=1 WORKERS=auto
+EGL: no NVIDIA vendor file in the system, using /home/sg9693/nvidia_egl.json
+== 2026-11-26 17:39:11 [+0 min] setup  [free disk: 3.2T]
++ python -c import torch; print('torch', torch.__version__, '| cuda', torch.cuda.is_available(), '|', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'NO GPU')
+torch 2.7.1+cu126 | cuda True | NVIDIA A100-SXM4-40GB
++ python -m pytest -q tests
+...................................                                      [100%]
+35 passed in 25.90s
++ python -c import os; n = len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count(); print('CPU cores for the simulator planner:', n)
+CPU cores for the simulator planner: 12
+== 2026-11-26 17:39:44 [+0 min] oracle: simulator as model, true cube distance, goals 40 steps away  [free disk: 3.2T]
++ python scripts/eval_oracle.py --cache data/cache --horizon 40 --cost true_cube --pairs 30 --samples 100 --iters 10 --topk 10 --out results_a100_2/plan.jsonl
+420 rows already in results_a100_2/plan.jsonl; matching runs are skipped
+simulator planner | cost true_cube | 30 of 30 pairs to plan | 12 workers | budget 100 x 10
+CEM solve time: 115.0429 seconds
+CEM solve time: 116.3421 seconds
+CEM solve time: 117.7046 seconds
+CEM solve time: 119.0103 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 41835, "success": true, "steps": 4, "final_dist_cm": 0.574027548655229, "min_dist_cm": 0.574027548655229, "start_dist_cm": 17.922930825966745, "solves": 1, "solve_sec": 119.01061129570007, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 120.5315 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 49275, "success": true, "steps": 4, "final_dist_cm": 0.4318719649853563, "min_dist_cm": 0.4318719649853563, "start_dist_cm": 17.991659879051266, "solves": 1, "solve_sec": 120.53185606002808, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 120.5833 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 47865, "success": true, "steps": 3, "final_dist_cm": 1.200308327678656, "min_dist_cm": 1.200308327678656, "start_dist_cm": 13.96768248389356, "solves": 1, "solve_sec": 120.58357787132263, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 122.4252 seconds
+CEM solve time: 123.0948 seconds
+CEM solve time: 125.1776 seconds
+CEM solve time: 126.1982 seconds
+CEM solve time: 130.8960 seconds
+CEM solve time: 131.4262 seconds
+CEM solve time: 115.6662 seconds
+CEM solve time: 115.9968 seconds
+CEM solve time: 117.3531 seconds
+CEM solve time: 117.3557 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 45872, "success": true, "steps": 4, "final_dist_cm": 1.9932614734826655, "min_dist_cm": 1.9932614734826655, "start_dist_cm": 20.88597236694534, "solves": 1, "solve_sec": 117.35606980323792, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 117.5285 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 45868, "success": true, "steps": 4, "final_dist_cm": 3.114776993073057, "min_dist_cm": 3.114776993073057, "start_dist_cm": 22.516583573607242, "solves": 1, "solve_sec": 117.528813123703, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 120.3744 seconds
+CEM solve time: 125.0060 seconds
+CEM solve time: 125.4943 seconds
+CEM solve time: 128.3153 seconds
+CEM solve time: 125.9939 seconds
+CEM solve time: 124.7132 seconds
+CEM solve time: 135.1203 seconds
+CEM solve time: 119.7554 seconds
+CEM solve time: 118.1860 seconds
+CEM solve time: 120.9682 seconds
+CEM solve time: 118.5463 seconds
+CEM solve time: 122.1029 seconds
+CEM solve time: 123.3026 seconds
+CEM solve time: 125.1306 seconds
+CEM solve time: 122.9427 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 41422, "success": true, "steps": 23, "final_dist_cm": 3.8128942862058577, "min_dist_cm": 3.8128942862058577, "start_dist_cm": 22.04621071304539, "solves": 3, "solve_sec": 125.04533871014912, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 125.8830 seconds
+CEM solve time: 122.6807 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 42636, "success": true, "steps": 17, "final_dist_cm": 3.4444294484618903, "min_dist_cm": 3.4444294484618903, "start_dist_cm": 29.35531436873257, "solves": 3, "solve_sec": 126.09700632095337, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 126.9728 seconds
+CEM solve time: 134.2910 seconds
+CEM solve time: 119.9451 seconds
+CEM solve time: 122.2658 seconds
+CEM solve time: 120.8119 seconds
+CEM solve time: 126.2715 seconds
+CEM solve time: 120.4203 seconds
+CEM solve time: 123.4952 seconds
+CEM solve time: 123.9848 seconds
+CEM solve time: 118.8149 seconds
+CEM solve time: 124.6037 seconds
+CEM solve time: 125.3259 seconds
+CEM solve time: 127.2280 seconds
+CEM solve time: 134.2152 seconds
+CEM solve time: 122.1552 seconds
+CEM solve time: 122.4057 seconds
+CEM solve time: 123.0487 seconds
+CEM solve time: 120.9361 seconds
+CEM solve time: 122.6724 seconds
+CEM solve time: 129.3668 seconds
+CEM solve time: 120.2168 seconds
+CEM solve time: 121.8022 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 45432, "success": true, "steps": 35, "final_dist_cm": 2.3251932608490473, "min_dist_cm": 2.3251932608490473, "start_dist_cm": 31.560660250187446, "solves": 5, "solve_sec": 123.67009019851685, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 123.3308 seconds
+CEM solve time: 122.1857 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 40419, "success": true, "steps": 35, "final_dist_cm": 3.3773406727023016, "min_dist_cm": 3.3773406727023016, "start_dist_cm": 33.21646383436061, "solves": 5, "solve_sec": 124.81365542411804, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 127.2762 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 50055, "success": true, "steps": 34, "final_dist_cm": 2.989215780058021, "min_dist_cm": 2.989215780058021, "start_dist_cm": 11.3372361387041, "solves": 5, "solve_sec": 126.57778553962707, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 136.8350 seconds
+CEM solve time: 120.3516 seconds
+CEM solve time: 120.7667 seconds
+CEM solve time: 121.0691 seconds
+CEM solve time: 124.5236 seconds
+CEM solve time: 122.5348 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 46236, "success": true, "steps": 29, "final_dist_cm": 3.8426790675063134, "min_dist_cm": 3.8426790675063134, "start_dist_cm": 10.964939248160679, "solves": 4, "solve_sec": 122.70163244009018, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 115.7741 seconds
+CEM solve time: 127.8780 seconds
+CEM solve time: 125.3976 seconds
+CEM solve time: 124.3353 seconds
+CEM solve time: 126.3152 seconds
+CEM solve time: 117.4489 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 43443, "success": true, "steps": 6, "final_dist_cm": 3.365502964667777, "min_dist_cm": 3.365502964667777, "start_dist_cm": 24.39821755844327, "solves": 1, "solve_sec": 117.44919228553772, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 136.4837 seconds
+CEM solve time: 120.3791 seconds
+CEM solve time: 121.3287 seconds
+CEM solve time: 120.4688 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 48856, "success": true, "steps": 34, "final_dist_cm": 3.6112286707352395, "min_dist_cm": 3.6112286707352395, "start_dist_cm": 29.56514420390323, "solves": 5, "solve_sec": 121.23967261314392, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 117.0412 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 47093, "success": true, "steps": 4, "final_dist_cm": 0.6940419630773524, "min_dist_cm": 0.6940419630773524, "start_dist_cm": 17.549558782434644, "solves": 1, "solve_sec": 117.04149866104126, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 116.2416 seconds
+CEM solve time: 124.4932 seconds
+CEM solve time: 128.0717 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 49251, "success": true, "steps": 56, "final_dist_cm": 2.176494894437606, "min_dist_cm": 2.176494894437606, "start_dist_cm": 11.707148126243062, "solves": 7, "solve_sec": 123.94530429158893, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 126.9821 seconds
+CEM solve time: 121.4201 seconds
+CEM solve time: 126.2390 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 40818, "success": true, "steps": 31, "final_dist_cm": 2.112488683004511, "min_dist_cm": 2.112488683004511, "start_dist_cm": 10.366450020173627, "solves": 4, "solve_sec": 125.1226995587349, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 128.5635 seconds
+CEM solve time: 131.5121 seconds
+CEM solve time: 119.8681 seconds
+CEM solve time: 121.5084 seconds
+CEM solve time: 117.9100 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 42459, "success": true, "steps": 4, "final_dist_cm": 0.42675640247009305, "min_dist_cm": 0.42675640247009305, "start_dist_cm": 16.863684434807137, "solves": 1, "solve_sec": 117.91027092933655, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 122.9288 seconds
+CEM solve time: 120.1848 seconds
+CEM solve time: 125.0160 seconds
+CEM solve time: 124.3443 seconds
+CEM solve time: 124.9301 seconds
+CEM solve time: 126.5437 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 42444, "success": true, "steps": 39, "final_dist_cm": 3.3176188347804705, "min_dist_cm": 3.3176188347804705, "start_dist_cm": 31.687323110311084, "solves": 5, "solve_sec": 123.59151310920716, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 124.1407 seconds
+CEM solve time: 131.8276 seconds
+CEM solve time: 129.3895 seconds
+CEM solve time: 120.7768 seconds
+CEM solve time: 120.3589 seconds
+CEM solve time: 120.3954 seconds
+CEM solve time: 123.3695 seconds
+CEM solve time: 125.2868 seconds
+CEM solve time: 123.4396 seconds
+CEM solve time: 124.2394 seconds
+CEM solve time: 121.0761 seconds
+CEM solve time: 128.8909 seconds
+CEM solve time: 126.4035 seconds
+CEM solve time: 131.7355 seconds
+CEM solve time: 121.9136 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 44628, "success": false, "steps": 80, "final_dist_cm": 14.292249118436365, "min_dist_cm": 14.292249118436365, "start_dist_cm": 14.292249126951923, "solves": 10, "solve_sec": 119.59190492630005, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 132.6708 seconds
+CEM solve time: 123.2879 seconds
+{"model": "oracle_sim", "k": 1, "arch": "oracle", "variant": "", "seed": 0, "cost": "true_cube", "offset": 40, "t0": 45832, "success": false, "steps": 80, "final_dist_cm": 28.183556683570544, "min_dist_cm": 28.1835566767141, "start_dist_cm": 28.183556939681047, "solves": 10, "solve_sec": 120.23899848461151, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 124.2488 seconds
+CEM solve time: 119.5493 seconds
+CEM solve time: 116.4388 seconds
+CEM solve time: 128.3166 seconds
+CEM solve time: 116.0958 seconds

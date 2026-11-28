@@ -80,7 +80,7 @@ class Probe:
         scale = G.diagonal().mean()
         best = None
         for lam in [1e-3, 1e-2, 1e-1, 1.0]:
-            W = torch.linalg.solve(G + lam * scale * torch.eye(len(G)), XY)
+            W = torch.linalg.solve(G + lam * scale * torch.eye(len(G), dtype=G.dtype, device=G.device), XY)
             err = (((X_val - self.mx) @ W + self.my - Y_val) ** 2).mean().item()
             if best is None or err < best[0]:
                 best = (err, W, lam)

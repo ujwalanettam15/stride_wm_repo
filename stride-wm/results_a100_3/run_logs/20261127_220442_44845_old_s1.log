@@ -1,0 +1,1207 @@
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights:  32%|███▏      | 71/223 [00:00<00:00, 692.22it/s]Loading weights:  71%|███████   | 158/223 [00:00<00:00, 777.44it/s]Loading weights: 100%|██████████| 223/223 [00:00<00:00, 810.73it/s]
+planning cost: probe_cube
+CEM solve time: 6.4686 seconds
+CEM solve time: 5.6287 seconds
+CEM solve time: 5.8473 seconds
+CEM solve time: 5.7958 seconds
+CEM solve time: 5.8961 seconds
+CEM solve time: 5.8217 seconds
+CEM solve time: 5.9056 seconds
+CEM solve time: 5.6200 seconds
+CEM solve time: 5.9263 seconds
+CEM solve time: 5.1381 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41422, "success": false, "steps": 80, "final_dist_cm": 22.046210704655095, "min_dist_cm": 22.046210704655095, "start_dist_cm": 22.04621071304539, "solves": 10, "solve_sec": 5.805023527145385, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.9079 seconds
+CEM solve time: 5.8657 seconds
+CEM solve time: 5.6180 seconds
+CEM solve time: 5.8975 seconds
+CEM solve time: 5.9338 seconds
+CEM solve time: 5.8059 seconds
+CEM solve time: 5.8804 seconds
+CEM solve time: 5.5887 seconds
+CEM solve time: 5.8126 seconds
+CEM solve time: 5.2603 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42636, "success": false, "steps": 80, "final_dist_cm": 14.682541819939033, "min_dist_cm": 14.321127716222565, "start_dist_cm": 29.35531436873257, "solves": 10, "solve_sec": 5.7572523832321165, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8975 seconds
+CEM solve time: 5.8276 seconds
+CEM solve time: 5.6431 seconds
+CEM solve time: 5.9223 seconds
+CEM solve time: 5.8423 seconds
+CEM solve time: 5.8776 seconds
+CEM solve time: 5.9054 seconds
+CEM solve time: 5.6188 seconds
+CEM solve time: 5.8295 seconds
+CEM solve time: 5.1190 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49251, "success": false, "steps": 80, "final_dist_cm": 11.707148119146115, "min_dist_cm": 11.707148119146115, "start_dist_cm": 11.707148126243062, "solves": 10, "solve_sec": 5.748566722869873, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.9221 seconds
+CEM solve time: 5.7645 seconds
+CEM solve time: 5.6836 seconds
+CEM solve time: 5.8822 seconds
+CEM solve time: 5.8565 seconds
+CEM solve time: 4.6841 seconds
+CEM solve time: 4.5950 seconds
+CEM solve time: 5.2207 seconds
+CEM solve time: 5.5503 seconds
+CEM solve time: 5.3302 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45832, "success": false, "steps": 80, "final_dist_cm": 28.183556682769318, "min_dist_cm": 28.18355667670672, "start_dist_cm": 28.183556939681047, "solves": 10, "solve_sec": 5.449115562438965, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.2029 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49275, "success": true, "steps": 4, "final_dist_cm": 0.6786885474434317, "min_dist_cm": 0.6786885474434317, "start_dist_cm": 17.991659879051266, "solves": 1, "solve_sec": 5.203128337860107, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.5809 seconds
+CEM solve time: 5.8747 seconds
+CEM solve time: 5.8568 seconds
+CEM solve time: 5.9078 seconds
+CEM solve time: 5.6053 seconds
+CEM solve time: 5.8503 seconds
+CEM solve time: 5.9363 seconds
+CEM solve time: 5.8819 seconds
+CEM solve time: 4.8241 seconds
+CEM solve time: 5.5447 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47865, "success": false, "steps": 80, "final_dist_cm": 7.267976251738212, "min_dist_cm": 6.361898900689922, "start_dist_cm": 13.96768248389356, "solves": 10, "solve_sec": 5.686482191085815, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.9359 seconds
+CEM solve time: 5.8605 seconds
+CEM solve time: 5.8681 seconds
+CEM solve time: 5.9022 seconds
+CEM solve time: 5.6910 seconds
+CEM solve time: 5.8112 seconds
+CEM solve time: 5.9060 seconds
+CEM solve time: 5.8922 seconds
+CEM solve time: 4.8360 seconds
+CEM solve time: 5.6196 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 50055, "success": false, "steps": 80, "final_dist_cm": 11.337236137765517, "min_dist_cm": 11.337236137765517, "start_dist_cm": 11.3372361387041, "solves": 10, "solve_sec": 5.7324937105178835, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.7068 seconds
+CEM solve time: 5.9279 seconds
+CEM solve time: 5.9029 seconds
+CEM solve time: 5.9138 seconds
+CEM solve time: 5.6004 seconds
+CEM solve time: 5.9351 seconds
+CEM solve time: 5.8960 seconds
+CEM solve time: 5.8170 seconds
+CEM solve time: 4.8038 seconds
+CEM solve time: 5.6827 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48071, "success": false, "steps": 80, "final_dist_cm": 13.325637141803783, "min_dist_cm": 10.791725598480282, "start_dist_cm": 12.071417348432407, "solves": 10, "solve_sec": 5.718836307525635, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.7779 seconds
+CEM solve time: 5.8947 seconds
+CEM solve time: 5.9282 seconds
+CEM solve time: 5.9200 seconds
+CEM solve time: 5.6476 seconds
+CEM solve time: 5.0145 seconds
+CEM solve time: 4.6339 seconds
+CEM solve time: 4.9907 seconds
+CEM solve time: 4.6678 seconds
+CEM solve time: 5.9096 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40419, "success": false, "steps": 80, "final_dist_cm": 33.21646383146321, "min_dist_cm": 33.21646383146321, "start_dist_cm": 33.21646383436061, "solves": 10, "solve_sec": 5.438702845573426, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8943 seconds
+CEM solve time: 5.8435 seconds
+CEM solve time: 5.9017 seconds
+CEM solve time: 5.6495 seconds
+CEM solve time: 5.9008 seconds
+CEM solve time: 5.8440 seconds
+CEM solve time: 5.8555 seconds
+CEM solve time: 5.0174 seconds
+CEM solve time: 4.6496 seconds
+CEM solve time: 4.6218 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44628, "success": false, "steps": 80, "final_dist_cm": 15.9695620920579, "min_dist_cm": 14.292249121303852, "start_dist_cm": 14.292249126951923, "solves": 10, "solve_sec": 5.517979264259338, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 4.6756 seconds
+CEM solve time: 4.6741 seconds
+CEM solve time: 4.6736 seconds
+CEM solve time: 4.6746 seconds
+CEM solve time: 4.6742 seconds
+CEM solve time: 4.8702 seconds
+CEM solve time: 5.8417 seconds
+CEM solve time: 5.9885 seconds
+CEM solve time: 6.7654 seconds
+CEM solve time: 6.9991 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41835, "success": false, "steps": 80, "final_dist_cm": 6.2078632953371615, "min_dist_cm": 6.061594765276878, "start_dist_cm": 17.922930825966745, "solves": 10, "solve_sec": 5.3838588953018185, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 4.6771 seconds
+CEM solve time: 5.9441 seconds
+CEM solve time: 6.8405 seconds
+CEM solve time: 6.8859 seconds
+CEM solve time: 6.8424 seconds
+CEM solve time: 6.8901 seconds
+CEM solve time: 6.9016 seconds
+CEM solve time: 4.7429 seconds
+CEM solve time: 4.6335 seconds
+CEM solve time: 4.6324 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45432, "success": false, "steps": 80, "final_dist_cm": 31.560660253251655, "min_dist_cm": 31.56066025018747, "start_dist_cm": 31.560660250187446, "solves": 10, "solve_sec": 5.899186968803406, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 4.6332 seconds
+CEM solve time: 4.6419 seconds
+CEM solve time: 4.6541 seconds
+CEM solve time: 4.6367 seconds
+CEM solve time: 4.6284 seconds
+CEM solve time: 4.7299 seconds
+CEM solve time: 4.6501 seconds
+CEM solve time: 4.0201 seconds
+CEM solve time: 4.6135 seconds
+CEM solve time: 5.1382 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44464, "success": false, "steps": 80, "final_dist_cm": 24.67343932609994, "min_dist_cm": 24.53148645953316, "start_dist_cm": 41.08187197820602, "solves": 10, "solve_sec": 4.634779667854309, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 4.6097 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45872, "success": true, "steps": 4, "final_dist_cm": 2.883219942763824, "min_dist_cm": 2.883219942763824, "start_dist_cm": 20.88597236694534, "solves": 1, "solve_sec": 4.609867334365845, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 4.8911 seconds
+CEM solve time: 11.0036 seconds
+CEM solve time: 12.6839 seconds
+CEM solve time: 12.6604 seconds
+CEM solve time: 12.6973 seconds
+CEM solve time: 12.6968 seconds
+CEM solve time: 12.3457 seconds
+CEM solve time: 12.5927 seconds
+CEM solve time: 12.6328 seconds
+CEM solve time: 12.6326 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45868, "success": false, "steps": 80, "final_dist_cm": 11.72668486686576, "min_dist_cm": 10.494207182127289, "start_dist_cm": 22.516583573607242, "solves": 10, "solve_sec": 11.683904671669007, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.5773 seconds
+CEM solve time: 11.0185 seconds
+CEM solve time: 12.6462 seconds
+CEM solve time: 12.3941 seconds
+CEM solve time: 12.5686 seconds
+CEM solve time: 12.5331 seconds
+CEM solve time: 12.2868 seconds
+CEM solve time: 12.6963 seconds
+CEM solve time: 12.5232 seconds
+CEM solve time: 12.6993 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46236, "success": false, "steps": 80, "final_dist_cm": 19.50103062715888, "min_dist_cm": 10.714484748775002, "start_dist_cm": 10.964939248160679, "solves": 10, "solve_sec": 12.39453899860382, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.6956 seconds
+CEM solve time: 11.3534 seconds
+CEM solve time: 12.6842 seconds
+CEM solve time: 12.6728 seconds
+CEM solve time: 12.4360 seconds
+CEM solve time: 12.5442 seconds
+CEM solve time: 12.2411 seconds
+CEM solve time: 12.6852 seconds
+CEM solve time: 12.6129 seconds
+CEM solve time: 12.6676 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48856, "success": false, "steps": 80, "final_dist_cm": 29.565144194312236, "min_dist_cm": 29.565144194312236, "start_dist_cm": 29.56514420390323, "solves": 10, "solve_sec": 12.459555768966675, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.6926 seconds
+CEM solve time: 11.6139 seconds
+CEM solve time: 12.4734 seconds
+CEM solve time: 12.5073 seconds
+CEM solve time: 12.6919 seconds
+CEM solve time: 12.5770 seconds
+CEM solve time: 12.4819 seconds
+CEM solve time: 12.6136 seconds
+CEM solve time: 12.5574 seconds
+CEM solve time: 12.7083 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40818, "success": false, "steps": 80, "final_dist_cm": 10.36645002982298, "min_dist_cm": 10.366450020289856, "start_dist_cm": 10.366450020173627, "solves": 10, "solve_sec": 12.49194576740265, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.6995 seconds
+CEM solve time: 11.8553 seconds
+CEM solve time: 12.4796 seconds
+CEM solve time: 12.5265 seconds
+CEM solve time: 12.7281 seconds
+CEM solve time: 12.4335 seconds
+CEM solve time: 12.5673 seconds
+CEM solve time: 12.7288 seconds
+CEM solve time: 12.5619 seconds
+CEM solve time: 12.7689 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42444, "success": false, "steps": 80, "final_dist_cm": 26.384632083522952, "min_dist_cm": 26.371568880639806, "start_dist_cm": 31.687323110311084, "solves": 10, "solve_sec": 12.535141634941102, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.7544 seconds
+CEM solve time: 12.2436 seconds
+CEM solve time: 12.3356 seconds
+CEM solve time: 12.7599 seconds
+CEM solve time: 12.7653 seconds
+CEM solve time: 12.3114 seconds
+CEM solve time: 12.7111 seconds
+CEM solve time: 12.7533 seconds
+CEM solve time: 12.7433 seconds
+CEM solve time: 12.6571 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43020, "success": false, "steps": 80, "final_dist_cm": 31.544546063994773, "min_dist_cm": 31.544546063994773, "start_dist_cm": 31.544546073633807, "solves": 10, "solve_sec": 12.6037166595459, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.6347 seconds
+CEM solve time: 12.7202 seconds
+CEM solve time: 11.6150 seconds
+CEM solve time: 12.7642 seconds
+CEM solve time: 12.7318 seconds
+CEM solve time: 12.4586 seconds
+CEM solve time: 12.7317 seconds
+CEM solve time: 12.7510 seconds
+CEM solve time: 12.6456 seconds
+CEM solve time: 12.5573 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47668, "success": false, "steps": 80, "final_dist_cm": 22.464300876412942, "min_dist_cm": 22.39020851109914, "start_dist_cm": 36.38667399172465, "solves": 10, "solve_sec": 12.561198472976685, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.5381 seconds
+CEM solve time: 12.6594 seconds
+CEM solve time: 12.1282 seconds
+CEM solve time: 12.4999 seconds
+CEM solve time: 12.6342 seconds
+CEM solve time: 12.3457 seconds
+CEM solve time: 12.7376 seconds
+CEM solve time: 12.6505 seconds
+CEM solve time: 12.7440 seconds
+CEM solve time: 12.7672 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43443, "success": false, "steps": 80, "final_dist_cm": 21.521574081419992, "min_dist_cm": 21.229893445117483, "start_dist_cm": 24.39821755844327, "solves": 10, "solve_sec": 12.57070450782776, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.7272 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47093, "success": true, "steps": 4, "final_dist_cm": 1.3986764981477826, "min_dist_cm": 1.3986764981477826, "start_dist_cm": 17.549558782434644, "solves": 1, "solve_sec": 12.727463006973267, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.7513 seconds
+CEM solve time: 12.0029 seconds
+CEM solve time: 12.7312 seconds
+CEM solve time: 12.5762 seconds
+CEM solve time: 12.3131 seconds
+CEM solve time: 12.7283 seconds
+CEM solve time: 12.5441 seconds
+CEM solve time: 12.7543 seconds
+CEM solve time: 12.6997 seconds
+CEM solve time: 12.4778 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43029, "success": false, "steps": 80, "final_dist_cm": 30.874749102357562, "min_dist_cm": 30.874749102357562, "start_dist_cm": 30.874749111996568, "solves": 10, "solve_sec": 12.558095955848694, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.5086 seconds
+CEM solve time: 12.1427 seconds
+CEM solve time: 12.5783 seconds
+CEM solve time: 12.4676 seconds
+CEM solve time: 12.4615 seconds
+CEM solve time: 12.5520 seconds
+CEM solve time: 12.7061 seconds
+CEM solve time: 12.5853 seconds
+CEM solve time: 12.6150 seconds
+CEM solve time: 12.5611 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42459, "success": false, "steps": 80, "final_dist_cm": 6.393169364489477, "min_dist_cm": 5.86413323132859, "start_dist_cm": 16.863684434807137, "solves": 10, "solve_sec": 12.518033576011657, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.5616 seconds
+CEM solve time: 12.2053 seconds
+CEM solve time: 12.1107 seconds
+CEM solve time: 12.3966 seconds
+CEM solve time: 12.4610 seconds
+CEM solve time: 12.7334 seconds
+CEM solve time: 12.5703 seconds
+CEM solve time: 12.6050 seconds
+CEM solve time: 12.5685 seconds
+CEM solve time: 12.2909 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46237, "success": false, "steps": 80, "final_dist_cm": 9.840685755303651, "min_dist_cm": 5.932761461275762, "start_dist_cm": 10.964939248079602, "solves": 10, "solve_sec": 12.450529885292053, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.4890 seconds
+CEM solve time: 12.4883 seconds
+CEM solve time: 12.0860 seconds
+CEM solve time: 12.5044 seconds
+CEM solve time: 12.4822 seconds
+CEM solve time: 12.7319 seconds
+CEM solve time: 12.7493 seconds
+CEM solve time: 12.6082 seconds
+CEM solve time: 12.6683 seconds
+CEM solve time: 12.7094 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45439, "success": false, "steps": 80, "final_dist_cm": 30.280973148819417, "min_dist_cm": 30.099677908681844, "start_dist_cm": 31.560656986894013, "solves": 10, "solve_sec": 12.551906776428222, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.6907 seconds
+CEM solve time: 12.6620 seconds
+CEM solve time: 11.8599 seconds
+CEM solve time: 12.0618 seconds
+CEM solve time: 12.0421 seconds
+CEM solve time: 12.6217 seconds
+CEM solve time: 12.4270 seconds
+CEM solve time: 12.7236 seconds
+CEM solve time: 12.6319 seconds
+CEM solve time: 12.7231 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40835, "success": false, "steps": 80, "final_dist_cm": 31.760477187770324, "min_dist_cm": 31.76047718478611, "start_dist_cm": 30.00965607504431, "solves": 10, "solve_sec": 12.444573044776917, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.7177 seconds
+CEM solve time: 12.7322 seconds
+CEM solve time: 12.3939 seconds
+CEM solve time: 12.3795 seconds
+CEM solve time: 12.0792 seconds
+CEM solve time: 12.5361 seconds
+CEM solve time: 12.4575 seconds
+CEM solve time: 12.5445 seconds
+CEM solve time: 12.7197 seconds
+CEM solve time: 12.7192 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45032, "success": false, "steps": 80, "final_dist_cm": 12.530998788404556, "min_dist_cm": 12.530998788404556, "start_dist_cm": 12.530998793150012, "solves": 10, "solve_sec": 12.528188157081605, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 12.7065 seconds
+CEM solve time: 12.6566 seconds
+CEM solve time: 12.4594 seconds
+CEM solve time: 12.3161 seconds
+CEM solve time: 12.3859 seconds
+CEM solve time: 12.7400 seconds
+CEM solve time: 12.4635 seconds
+CEM solve time: 12.6766 seconds
+CEM solve time: 12.6035 seconds
+CEM solve time: 12.5451 seconds
+{"model": "chunk_k1_s1", "k": 1, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41615, "success": false, "steps": 80, "final_dist_cm": 23.74449619769073, "min_dist_cm": 23.74449619769073, "start_dist_cm": 23.744496205767764, "solves": 10, "solve_sec": 12.555528712272643, "calls_per_solve": 400, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.1768 seconds
+CEM solve time: 6.6508 seconds
+CEM solve time: 6.0587 seconds
+CEM solve time: 6.6688 seconds
+CEM solve time: 6.1342 seconds
+CEM solve time: 6.2205 seconds
+CEM solve time: 6.0377 seconds
+CEM solve time: 6.2852 seconds
+CEM solve time: 6.3014 seconds
+CEM solve time: 6.1918 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41422, "success": false, "steps": 80, "final_dist_cm": 22.106647379218085, "min_dist_cm": 20.963257805903783, "start_dist_cm": 22.04621071304539, "solves": 10, "solve_sec": 6.272801947593689, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.5539 seconds
+CEM solve time: 6.0980 seconds
+CEM solve time: 6.4632 seconds
+CEM solve time: 6.1686 seconds
+CEM solve time: 6.4394 seconds
+CEM solve time: 6.2528 seconds
+CEM solve time: 6.5374 seconds
+CEM solve time: 6.2631 seconds
+CEM solve time: 6.4373 seconds
+CEM solve time: 6.3456 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42636, "success": false, "steps": 80, "final_dist_cm": 28.285348852597213, "min_dist_cm": 23.919612834904505, "start_dist_cm": 29.35531436873257, "solves": 10, "solve_sec": 6.356133604049683, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.4294 seconds
+CEM solve time: 6.2031 seconds
+CEM solve time: 6.3328 seconds
+CEM solve time: 6.2097 seconds
+CEM solve time: 6.3675 seconds
+CEM solve time: 6.0563 seconds
+CEM solve time: 5.9177 seconds
+CEM solve time: 5.8614 seconds
+CEM solve time: 5.9315 seconds
+CEM solve time: 6.6127 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49251, "success": false, "steps": 80, "final_dist_cm": 11.707148120944094, "min_dist_cm": 11.707148120944094, "start_dist_cm": 11.707148126243062, "solves": 10, "solve_sec": 6.192395567893982, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.1442 seconds
+CEM solve time: 6.2887 seconds
+CEM solve time: 6.0353 seconds
+CEM solve time: 6.5212 seconds
+CEM solve time: 6.1920 seconds
+CEM solve time: 6.3204 seconds
+CEM solve time: 6.2055 seconds
+CEM solve time: 6.3943 seconds
+CEM solve time: 5.9722 seconds
+CEM solve time: 6.2247 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45832, "success": false, "steps": 80, "final_dist_cm": 28.183556671475742, "min_dist_cm": 28.183556671475742, "start_dist_cm": 28.183556939681047, "solves": 10, "solve_sec": 6.230080032348633, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.2436 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49275, "success": true, "steps": 4, "final_dist_cm": 1.642381602122691, "min_dist_cm": 1.642381602122691, "start_dist_cm": 17.991659879051266, "solves": 1, "solve_sec": 6.243805408477783, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.3935 seconds
+CEM solve time: 6.3424 seconds
+CEM solve time: 6.1146 seconds
+CEM solve time: 6.3512 seconds
+CEM solve time: 5.8334 seconds
+CEM solve time: 6.5175 seconds
+CEM solve time: 5.7743 seconds
+CEM solve time: 6.5763 seconds
+CEM solve time: 6.1940 seconds
+CEM solve time: 6.4248 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47865, "success": false, "steps": 80, "final_dist_cm": 5.879897666457049, "min_dist_cm": 5.879897657795424, "start_dist_cm": 13.96768248389356, "solves": 10, "solve_sec": 6.252393484115601, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.9473 seconds
+CEM solve time: 6.4261 seconds
+CEM solve time: 6.2179 seconds
+CEM solve time: 6.3328 seconds
+CEM solve time: 6.3065 seconds
+CEM solve time: 6.3093 seconds
+CEM solve time: 6.0726 seconds
+CEM solve time: 6.4369 seconds
+CEM solve time: 6.2290 seconds
+CEM solve time: 6.2452 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 50055, "success": false, "steps": 80, "final_dist_cm": 11.337236129025253, "min_dist_cm": 11.337236129025253, "start_dist_cm": 11.3372361387041, "solves": 10, "solve_sec": 6.252574872970581, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.1648 seconds
+CEM solve time: 6.3530 seconds
+CEM solve time: 6.2087 seconds
+CEM solve time: 6.0899 seconds
+CEM solve time: 6.0657 seconds
+CEM solve time: 6.4330 seconds
+CEM solve time: 5.9873 seconds
+CEM solve time: 6.3230 seconds
+CEM solve time: 6.1713 seconds
+CEM solve time: 6.1785 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48071, "success": false, "steps": 80, "final_dist_cm": 13.926130097437333, "min_dist_cm": 11.979528095316844, "start_dist_cm": 12.071417348432407, "solves": 10, "solve_sec": 6.197733855247497, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.1873 seconds
+CEM solve time: 6.2435 seconds
+CEM solve time: 6.3243 seconds
+CEM solve time: 6.2353 seconds
+CEM solve time: 6.3169 seconds
+CEM solve time: 6.3370 seconds
+CEM solve time: 6.2448 seconds
+CEM solve time: 6.3022 seconds
+CEM solve time: 6.1009 seconds
+CEM solve time: 6.3288 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40419, "success": false, "steps": 80, "final_dist_cm": 33.21646383148228, "min_dist_cm": 33.21646383148228, "start_dist_cm": 33.21646383436061, "solves": 10, "solve_sec": 6.262297821044922, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.2379 seconds
+CEM solve time: 6.4101 seconds
+CEM solve time: 6.3147 seconds
+CEM solve time: 5.8915 seconds
+CEM solve time: 6.1557 seconds
+CEM solve time: 6.4249 seconds
+CEM solve time: 6.2099 seconds
+CEM solve time: 6.2959 seconds
+CEM solve time: 6.1288 seconds
+CEM solve time: 6.2348 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44628, "success": false, "steps": 80, "final_dist_cm": 14.292249122435555, "min_dist_cm": 14.292249122435555, "start_dist_cm": 14.292249126951923, "solves": 10, "solve_sec": 6.230623841285706, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.1492 seconds
+CEM solve time: 6.3073 seconds
+CEM solve time: 6.3352 seconds
+CEM solve time: 6.3056 seconds
+CEM solve time: 6.2504 seconds
+CEM solve time: 6.3870 seconds
+CEM solve time: 6.1483 seconds
+CEM solve time: 6.2827 seconds
+CEM solve time: 6.2462 seconds
+CEM solve time: 6.3230 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41835, "success": false, "steps": 80, "final_dist_cm": 5.427528755752839, "min_dist_cm": 5.426225424884181, "start_dist_cm": 17.922930825966745, "solves": 10, "solve_sec": 6.27372419834137, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.2940 seconds
+CEM solve time: 6.4138 seconds
+CEM solve time: 6.2260 seconds
+CEM solve time: 5.9273 seconds
+CEM solve time: 6.3428 seconds
+CEM solve time: 6.3299 seconds
+CEM solve time: 6.2602 seconds
+CEM solve time: 6.2997 seconds
+CEM solve time: 6.1008 seconds
+CEM solve time: 6.2656 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45432, "success": false, "steps": 80, "final_dist_cm": 31.560660242280182, "min_dist_cm": 31.560660242280182, "start_dist_cm": 31.560660250187446, "solves": 10, "solve_sec": 6.246192240715027, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.1486 seconds
+CEM solve time: 6.2880 seconds
+CEM solve time: 6.0573 seconds
+CEM solve time: 6.4159 seconds
+CEM solve time: 6.2766 seconds
+CEM solve time: 6.3088 seconds
+CEM solve time: 6.3322 seconds
+CEM solve time: 6.0065 seconds
+CEM solve time: 6.4086 seconds
+CEM solve time: 6.2306 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44464, "success": false, "steps": 80, "final_dist_cm": 33.930661442629464, "min_dist_cm": 33.93059984755002, "start_dist_cm": 41.08187197820602, "solves": 10, "solve_sec": 6.247502732276916, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.4084 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45872, "success": true, "steps": 4, "final_dist_cm": 2.7978942693652105, "min_dist_cm": 2.7978942693652105, "start_dist_cm": 20.88597236694534, "solves": 1, "solve_sec": 6.408592224121094, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.4252 seconds
+CEM solve time: 5.8075 seconds
+CEM solve time: 6.3385 seconds
+CEM solve time: 6.2388 seconds
+CEM solve time: 6.3096 seconds
+CEM solve time: 6.3313 seconds
+CEM solve time: 6.0541 seconds
+CEM solve time: 6.2277 seconds
+CEM solve time: 6.3091 seconds
+CEM solve time: 6.3188 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45868, "success": false, "steps": 80, "final_dist_cm": 8.64810590777061, "min_dist_cm": 8.626036851986369, "start_dist_cm": 22.516583573607242, "solves": 10, "solve_sec": 6.236250567436218, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.0795 seconds
+CEM solve time: 6.2848 seconds
+CEM solve time: 6.4252 seconds
+CEM solve time: 6.2359 seconds
+CEM solve time: 6.3968 seconds
+CEM solve time: 6.1791 seconds
+CEM solve time: 5.9453 seconds
+CEM solve time: 6.2014 seconds
+CEM solve time: 6.2995 seconds
+CEM solve time: 6.1637 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46236, "success": false, "steps": 80, "final_dist_cm": 10.964939249630165, "min_dist_cm": 10.964939248160679, "start_dist_cm": 10.964939248160679, "solves": 10, "solve_sec": 6.221308016777039, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.3451 seconds
+CEM solve time: 5.7007 seconds
+CEM solve time: 6.1552 seconds
+CEM solve time: 6.2315 seconds
+CEM solve time: 6.0116 seconds
+CEM solve time: 6.4579 seconds
+CEM solve time: 5.7374 seconds
+CEM solve time: 6.4846 seconds
+CEM solve time: 6.1357 seconds
+CEM solve time: 6.3628 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48856, "success": false, "steps": 80, "final_dist_cm": 28.948633408617535, "min_dist_cm": 28.94428854407922, "start_dist_cm": 29.56514420390323, "solves": 10, "solve_sec": 6.1624424934387205, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8726 seconds
+CEM solve time: 6.2657 seconds
+CEM solve time: 6.1739 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40818, "success": true, "steps": 23, "final_dist_cm": 3.136806343176494, "min_dist_cm": 3.136806343176494, "start_dist_cm": 10.366450020173627, "solves": 3, "solve_sec": 6.104259093602498, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 6.1223 seconds
+CEM solve time: 6.0498 seconds
+CEM solve time: 6.0689 seconds
+CEM solve time: 5.9140 seconds
+CEM solve time: 5.9450 seconds
+CEM solve time: 5.9447 seconds
+CEM solve time: 5.9735 seconds
+CEM solve time: 5.9229 seconds
+CEM solve time: 5.7769 seconds
+CEM solve time: 5.9264 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42444, "success": false, "steps": 80, "final_dist_cm": 32.07276496716871, "min_dist_cm": 31.887107043175817, "start_dist_cm": 31.687323110311084, "solves": 10, "solve_sec": 5.964595937728882, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.4994 seconds
+CEM solve time: 5.9889 seconds
+CEM solve time: 5.9780 seconds
+CEM solve time: 5.6992 seconds
+CEM solve time: 5.7672 seconds
+CEM solve time: 5.8467 seconds
+CEM solve time: 5.8355 seconds
+CEM solve time: 5.8636 seconds
+CEM solve time: 5.8318 seconds
+CEM solve time: 5.8444 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43020, "success": false, "steps": 80, "final_dist_cm": 31.544546069049606, "min_dist_cm": 31.544546069049606, "start_dist_cm": 31.544546073633807, "solves": 10, "solve_sec": 5.815627336502075, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8222 seconds
+CEM solve time: 5.8448 seconds
+CEM solve time: 5.8343 seconds
+CEM solve time: 5.6523 seconds
+CEM solve time: 5.8328 seconds
+CEM solve time: 5.6586 seconds
+CEM solve time: 5.8328 seconds
+CEM solve time: 5.8482 seconds
+CEM solve time: 5.8314 seconds
+CEM solve time: 5.8461 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47668, "success": false, "steps": 80, "final_dist_cm": 28.376245071702883, "min_dist_cm": 28.362403438634264, "start_dist_cm": 36.38667399172465, "solves": 10, "solve_sec": 5.800509762763977, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.4848 seconds
+CEM solve time: 5.8478 seconds
+CEM solve time: 5.8350 seconds
+CEM solve time: 5.6496 seconds
+CEM solve time: 5.8327 seconds
+CEM solve time: 5.8445 seconds
+CEM solve time: 5.8295 seconds
+CEM solve time: 5.8450 seconds
+CEM solve time: 5.8322 seconds
+CEM solve time: 5.8455 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43443, "success": false, "steps": 80, "final_dist_cm": 19.666580504868396, "min_dist_cm": 19.209475730018898, "start_dist_cm": 24.39821755844327, "solves": 10, "solve_sec": 5.784813928604126, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8185 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47093, "success": true, "steps": 4, "final_dist_cm": 2.579260838270343, "min_dist_cm": 2.579260838270343, "start_dist_cm": 17.549558782434644, "solves": 1, "solve_sec": 5.818683862686157, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8339 seconds
+CEM solve time: 5.8318 seconds
+CEM solve time: 5.6506 seconds
+CEM solve time: 5.6441 seconds
+CEM solve time: 5.8444 seconds
+CEM solve time: 5.8350 seconds
+CEM solve time: 5.8444 seconds
+CEM solve time: 5.8351 seconds
+CEM solve time: 5.6958 seconds
+CEM solve time: 5.6145 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43029, "success": false, "steps": 80, "final_dist_cm": 31.91388621480538, "min_dist_cm": 30.874749110905995, "start_dist_cm": 30.874749111996568, "solves": 10, "solve_sec": 5.763117003440857, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8364 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42459, "success": true, "steps": 4, "final_dist_cm": 1.5666376847673829, "min_dist_cm": 1.5666376847673829, "start_dist_cm": 16.863684434807137, "solves": 1, "solve_sec": 5.8364927768707275, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8245 seconds
+CEM solve time: 5.6534 seconds
+CEM solve time: 5.8311 seconds
+CEM solve time: 5.8443 seconds
+CEM solve time: 5.8350 seconds
+CEM solve time: 5.8461 seconds
+CEM solve time: 5.8348 seconds
+CEM solve time: 5.8471 seconds
+CEM solve time: 5.8330 seconds
+CEM solve time: 5.8440 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46237, "success": false, "steps": 80, "final_dist_cm": 10.989841760330238, "min_dist_cm": 10.923324946672281, "start_dist_cm": 10.964939248079602, "solves": 10, "solve_sec": 5.819482445716858, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8345 seconds
+CEM solve time: 5.6396 seconds
+CEM solve time: 5.6598 seconds
+CEM solve time: 5.8333 seconds
+CEM solve time: 5.8439 seconds
+CEM solve time: 5.8380 seconds
+CEM solve time: 5.8481 seconds
+CEM solve time: 5.6585 seconds
+CEM solve time: 5.6669 seconds
+CEM solve time: 5.8485 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45439, "success": false, "steps": 80, "final_dist_cm": 31.56065697915173, "min_dist_cm": 31.56065697915173, "start_dist_cm": 31.560656986894013, "solves": 10, "solve_sec": 5.767246103286743, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8436 seconds
+CEM solve time: 5.6603 seconds
+CEM solve time: 5.8414 seconds
+CEM solve time: 5.8490 seconds
+CEM solve time: 5.8281 seconds
+CEM solve time: 5.8603 seconds
+CEM solve time: 5.8335 seconds
+CEM solve time: 5.6712 seconds
+CEM solve time: 5.8336 seconds
+CEM solve time: 5.8467 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40835, "success": false, "steps": 80, "final_dist_cm": 31.760490658911028, "min_dist_cm": 31.76049065619263, "start_dist_cm": 30.00965607504431, "solves": 10, "solve_sec": 5.806916618347168, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8364 seconds
+CEM solve time: 5.6566 seconds
+CEM solve time: 4.9773 seconds
+CEM solve time: 5.8158 seconds
+CEM solve time: 5.8424 seconds
+CEM solve time: 5.8120 seconds
+CEM solve time: 5.8405 seconds
+CEM solve time: 5.6928 seconds
+CEM solve time: 5.4124 seconds
+CEM solve time: 5.8089 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45032, "success": false, "steps": 80, "final_dist_cm": 12.666702861459584, "min_dist_cm": 12.530998788859268, "start_dist_cm": 12.530998793150012, "solves": 10, "solve_sec": 5.669636559486389, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 5.8087 seconds
+CEM solve time: 5.8096 seconds
+CEM solve time: 5.5243 seconds
+CEM solve time: 5.5414 seconds
+CEM solve time: 5.8152 seconds
+CEM solve time: 5.8020 seconds
+CEM solve time: 5.8184 seconds
+CEM solve time: 5.2400 seconds
+CEM solve time: 5.6101 seconds
+CEM solve time: 5.7973 seconds
+{"model": "chunk_k2_s1", "k": 2, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41615, "success": false, "steps": 80, "final_dist_cm": 23.744496198569, "min_dist_cm": 23.744496198569, "start_dist_cm": 23.744496205767764, "solves": 10, "solve_sec": 5.676861977577209, "calls_per_solve": 200, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9486 seconds
+CEM solve time: 2.9644 seconds
+CEM solve time: 2.9617 seconds
+CEM solve time: 2.9625 seconds
+CEM solve time: 2.9704 seconds
+CEM solve time: 2.5828 seconds
+CEM solve time: 2.9737 seconds
+CEM solve time: 2.9461 seconds
+CEM solve time: 2.9722 seconds
+CEM solve time: 2.9505 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41422, "success": false, "steps": 80, "final_dist_cm": 21.937690878163327, "min_dist_cm": 21.673774135723363, "start_dist_cm": 22.04621071304539, "solves": 10, "solve_sec": 2.9234288215637205, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9624 seconds
+CEM solve time: 2.9462 seconds
+CEM solve time: 2.9719 seconds
+CEM solve time: 2.9537 seconds
+CEM solve time: 2.7813 seconds
+CEM solve time: 2.7813 seconds
+CEM solve time: 2.9550 seconds
+CEM solve time: 2.9649 seconds
+CEM solve time: 2.9605 seconds
+CEM solve time: 2.9584 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42636, "success": false, "steps": 80, "final_dist_cm": 20.346540448983944, "min_dist_cm": 20.280053166274882, "start_dist_cm": 29.35531436873257, "solves": 10, "solve_sec": 2.9237121105194093, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9368 seconds
+CEM solve time: 2.9700 seconds
+CEM solve time: 2.9489 seconds
+CEM solve time: 2.9674 seconds
+CEM solve time: 2.4859 seconds
+CEM solve time: 2.9705 seconds
+CEM solve time: 2.9500 seconds
+CEM solve time: 2.9695 seconds
+CEM solve time: 2.9580 seconds
+CEM solve time: 2.9623 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49251, "success": false, "steps": 80, "final_dist_cm": 11.707148134327237, "min_dist_cm": 11.707148126243062, "start_dist_cm": 11.707148126243062, "solves": 10, "solve_sec": 2.912074398994446, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9364 seconds
+CEM solve time: 2.9729 seconds
+CEM solve time: 2.9456 seconds
+CEM solve time: 2.7949 seconds
+CEM solve time: 2.9105 seconds
+CEM solve time: 2.8366 seconds
+CEM solve time: 2.9613 seconds
+CEM solve time: 2.9555 seconds
+CEM solve time: 2.9590 seconds
+CEM solve time: 2.9602 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45832, "success": false, "steps": 80, "final_dist_cm": 28.18355668397863, "min_dist_cm": 28.1835566767071, "start_dist_cm": 28.183556939681047, "solves": 10, "solve_sec": 2.923417854309082, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9600 seconds
+CEM solve time: 2.9493 seconds
+CEM solve time: 2.9692 seconds
+CEM solve time: 2.7123 seconds
+CEM solve time: 2.8197 seconds
+CEM solve time: 2.9614 seconds
+CEM solve time: 2.9576 seconds
+CEM solve time: 2.9591 seconds
+CEM solve time: 2.9603 seconds
+CEM solve time: 2.9578 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49275, "success": false, "steps": 80, "final_dist_cm": 11.428138654438072, "min_dist_cm": 5.179258434594915, "start_dist_cm": 17.991659879051266, "solves": 10, "solve_sec": 2.92079381942749, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9464 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47865, "success": true, "steps": 4, "final_dist_cm": 3.7575639068688034, "min_dist_cm": 3.7575639068688034, "start_dist_cm": 13.96768248389356, "solves": 1, "solve_sec": 2.946561098098755, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9501 seconds
+CEM solve time: 2.7731 seconds
+CEM solve time: 2.9633 seconds
+CEM solve time: 2.7848 seconds
+CEM solve time: 2.9723 seconds
+CEM solve time: 2.7717 seconds
+CEM solve time: 2.9744 seconds
+CEM solve time: 2.9492 seconds
+CEM solve time: 2.9702 seconds
+CEM solve time: 2.9480 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 50055, "success": false, "steps": 80, "final_dist_cm": 11.337236131592894, "min_dist_cm": 11.337236131592894, "start_dist_cm": 11.3372361387041, "solves": 10, "solve_sec": 2.90585081577301, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9769 seconds
+CEM solve time: 2.7203 seconds
+CEM solve time: 2.8146 seconds
+CEM solve time: 2.9467 seconds
+CEM solve time: 2.9710 seconds
+CEM solve time: 2.9469 seconds
+CEM solve time: 2.9716 seconds
+CEM solve time: 2.9464 seconds
+CEM solve time: 2.9709 seconds
+CEM solve time: 2.9386 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48071, "success": false, "steps": 80, "final_dist_cm": 14.423454215620254, "min_dist_cm": 13.003131909878471, "start_dist_cm": 12.071417348432407, "solves": 10, "solve_sec": 2.9205230951309202, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9192 seconds
+CEM solve time: 2.8135 seconds
+CEM solve time: 2.9550 seconds
+CEM solve time: 2.7789 seconds
+CEM solve time: 2.7793 seconds
+CEM solve time: 2.9525 seconds
+CEM solve time: 2.9641 seconds
+CEM solve time: 2.9606 seconds
+CEM solve time: 2.9539 seconds
+CEM solve time: 2.9608 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40419, "success": false, "steps": 80, "final_dist_cm": 33.2164638316396, "min_dist_cm": 33.2164638316396, "start_dist_cm": 33.21646383436061, "solves": 10, "solve_sec": 2.9039150953292845, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.5116 seconds
+CEM solve time: 2.5258 seconds
+CEM solve time: 2.9447 seconds
+CEM solve time: 2.9383 seconds
+CEM solve time: 2.9493 seconds
+CEM solve time: 2.9397 seconds
+CEM solve time: 2.9467 seconds
+CEM solve time: 2.9386 seconds
+CEM solve time: 2.9481 seconds
+CEM solve time: 2.9441 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44628, "success": false, "steps": 80, "final_dist_cm": 14.292249120764755, "min_dist_cm": 14.292249120764755, "start_dist_cm": 14.292249126951923, "solves": 10, "solve_sec": 2.858842468261719, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9246 seconds
+CEM solve time: 2.7494 seconds
+CEM solve time: 2.7506 seconds
+CEM solve time: 2.9496 seconds
+CEM solve time: 2.7505 seconds
+CEM solve time: 2.9505 seconds
+CEM solve time: 2.9367 seconds
+CEM solve time: 2.9460 seconds
+CEM solve time: 2.9316 seconds
+CEM solve time: 2.9471 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41835, "success": false, "steps": 80, "final_dist_cm": 4.835006444753211, "min_dist_cm": 4.616932950673239, "start_dist_cm": 17.922930825966745, "solves": 10, "solve_sec": 2.8837912321090697, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.7595 seconds
+CEM solve time: 2.7439 seconds
+CEM solve time: 2.9469 seconds
+CEM solve time: 2.9360 seconds
+CEM solve time: 2.9442 seconds
+CEM solve time: 2.9452 seconds
+CEM solve time: 2.9371 seconds
+CEM solve time: 2.9452 seconds
+CEM solve time: 2.9402 seconds
+CEM solve time: 2.9492 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45432, "success": false, "steps": 80, "final_dist_cm": 31.56066025945858, "min_dist_cm": 31.56066025018747, "start_dist_cm": 31.560660250187446, "solves": 10, "solve_sec": 2.904882383346558, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9413 seconds
+CEM solve time: 2.7576 seconds
+CEM solve time: 2.7637 seconds
+CEM solve time: 2.7699 seconds
+CEM solve time: 2.9361 seconds
+CEM solve time: 2.9508 seconds
+CEM solve time: 2.9354 seconds
+CEM solve time: 2.9460 seconds
+CEM solve time: 2.9374 seconds
+CEM solve time: 2.9462 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44464, "success": false, "steps": 80, "final_dist_cm": 33.45887010948556, "min_dist_cm": 33.44172685667161, "start_dist_cm": 41.08187197820602, "solves": 10, "solve_sec": 2.888607454299927, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.7397 seconds
+CEM solve time: 2.7808 seconds
+CEM solve time: 2.7547 seconds
+CEM solve time: 2.7381 seconds
+CEM solve time: 2.9491 seconds
+CEM solve time: 2.9363 seconds
+CEM solve time: 2.9474 seconds
+CEM solve time: 2.9389 seconds
+CEM solve time: 2.9505 seconds
+CEM solve time: 2.9326 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45872, "success": false, "steps": 80, "final_dist_cm": 5.608164048798228, "min_dist_cm": 5.20994362411304, "start_dist_cm": 20.88597236694534, "solves": 10, "solve_sec": 2.8669406175613403, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9382 seconds
+CEM solve time: 2.7542 seconds
+CEM solve time: 2.9049 seconds
+CEM solve time: 2.6105 seconds
+CEM solve time: 2.9604 seconds
+CEM solve time: 2.9252 seconds
+CEM solve time: 2.9571 seconds
+CEM solve time: 2.9233 seconds
+CEM solve time: 2.9586 seconds
+CEM solve time: 2.7954 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45868, "success": false, "steps": 80, "final_dist_cm": 9.057391157288565, "min_dist_cm": 8.831882538654634, "start_dist_cm": 22.516583573607242, "solves": 10, "solve_sec": 2.872921347618103, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9387 seconds
+CEM solve time: 2.9391 seconds
+CEM solve time: 2.9471 seconds
+CEM solve time: 2.7436 seconds
+CEM solve time: 2.9495 seconds
+CEM solve time: 2.9357 seconds
+CEM solve time: 2.9472 seconds
+CEM solve time: 2.9385 seconds
+CEM solve time: 2.9497 seconds
+CEM solve time: 2.9399 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46236, "success": false, "steps": 80, "final_dist_cm": 11.516884426178411, "min_dist_cm": 9.749709125438343, "start_dist_cm": 10.964939248160679, "solves": 10, "solve_sec": 2.923044943809509, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.7854 seconds
+CEM solve time: 2.9229 seconds
+CEM solve time: 2.7638 seconds
+CEM solve time: 2.7322 seconds
+CEM solve time: 2.9425 seconds
+CEM solve time: 2.9360 seconds
+CEM solve time: 2.9454 seconds
+CEM solve time: 2.9492 seconds
+CEM solve time: 2.9358 seconds
+CEM solve time: 2.7651 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48856, "success": false, "steps": 80, "final_dist_cm": 28.974658374064727, "min_dist_cm": 28.97465837337439, "start_dist_cm": 29.56514420390323, "solves": 10, "solve_sec": 2.8679680824279785, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9251 seconds
+CEM solve time: 2.7714 seconds
+CEM solve time: 2.9318 seconds
+CEM solve time: 2.7673 seconds
+CEM solve time: 2.9341 seconds
+CEM solve time: 2.9494 seconds
+CEM solve time: 2.9355 seconds
+CEM solve time: 2.9486 seconds
+CEM solve time: 2.9353 seconds
+CEM solve time: 2.9497 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40818, "success": false, "steps": 80, "final_dist_cm": 10.36645003066254, "min_dist_cm": 10.366450020289856, "start_dist_cm": 10.366450020173627, "solves": 10, "solve_sec": 2.904960775375366, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.7460 seconds
+CEM solve time: 2.7868 seconds
+CEM solve time: 2.7301 seconds
+CEM solve time: 2.7732 seconds
+CEM solve time: 2.9275 seconds
+CEM solve time: 2.9561 seconds
+CEM solve time: 2.9308 seconds
+CEM solve time: 2.9484 seconds
+CEM solve time: 2.9376 seconds
+CEM solve time: 2.9453 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42444, "success": false, "steps": 80, "final_dist_cm": 28.92562319989201, "min_dist_cm": 28.872001548803116, "start_dist_cm": 31.687323110311084, "solves": 10, "solve_sec": 2.868326711654663, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.7383 seconds
+CEM solve time: 2.9463 seconds
+CEM solve time: 2.9386 seconds
+CEM solve time: 2.7444 seconds
+CEM solve time: 2.9350 seconds
+CEM solve time: 2.9486 seconds
+CEM solve time: 2.9410 seconds
+CEM solve time: 2.9469 seconds
+CEM solve time: 2.9389 seconds
+CEM solve time: 2.9475 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43020, "success": false, "steps": 80, "final_dist_cm": 31.544546063921334, "min_dist_cm": 31.544546063921334, "start_dist_cm": 31.544546073633807, "solves": 10, "solve_sec": 2.902672624588013, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9403 seconds
+CEM solve time: 2.6447 seconds
+CEM solve time: 2.8804 seconds
+CEM solve time: 2.7540 seconds
+CEM solve time: 2.9345 seconds
+CEM solve time: 2.9490 seconds
+CEM solve time: 2.9352 seconds
+CEM solve time: 2.9446 seconds
+CEM solve time: 2.9402 seconds
+CEM solve time: 2.9469 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47668, "success": false, "steps": 80, "final_dist_cm": 28.061979449948137, "min_dist_cm": 27.398030682831216, "start_dist_cm": 36.38667399172465, "solves": 10, "solve_sec": 2.8871378898620605, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.8638 seconds
+CEM solve time: 2.9499 seconds
+CEM solve time: 2.9327 seconds
+CEM solve time: 2.7536 seconds
+CEM solve time: 2.9342 seconds
+CEM solve time: 2.9461 seconds
+CEM solve time: 2.9361 seconds
+CEM solve time: 2.9525 seconds
+CEM solve time: 2.9329 seconds
+CEM solve time: 2.9483 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43443, "success": false, "steps": 80, "final_dist_cm": 13.48558128184551, "min_dist_cm": 13.290368823086881, "start_dist_cm": 24.39821755844327, "solves": 10, "solve_sec": 2.9151647329330443, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.7576 seconds
+CEM solve time: 2.7550 seconds
+CEM solve time: 2.8199 seconds
+CEM solve time: 2.6905 seconds
+CEM solve time: 2.9612 seconds
+CEM solve time: 2.9262 seconds
+CEM solve time: 2.9606 seconds
+CEM solve time: 2.9238 seconds
+CEM solve time: 2.9642 seconds
+CEM solve time: 2.7399 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47093, "success": false, "steps": 80, "final_dist_cm": 10.060465961005649, "min_dist_cm": 8.36985418860084, "start_dist_cm": 17.549558782434644, "solves": 10, "solve_sec": 2.850051522254944, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9278 seconds
+CEM solve time: 2.9532 seconds
+CEM solve time: 2.9375 seconds
+CEM solve time: 2.7520 seconds
+CEM solve time: 2.9375 seconds
+CEM solve time: 2.9507 seconds
+CEM solve time: 2.9342 seconds
+CEM solve time: 2.9452 seconds
+CEM solve time: 2.9351 seconds
+CEM solve time: 2.9521 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43029, "success": false, "steps": 80, "final_dist_cm": 30.874749102408693, "min_dist_cm": 30.874749102408693, "start_dist_cm": 30.874749111996568, "solves": 10, "solve_sec": 2.922678804397583, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.7368 seconds
+CEM solve time: 2.9530 seconds
+CEM solve time: 2.7416 seconds
+CEM solve time: 2.7579 seconds
+CEM solve time: 2.9252 seconds
+CEM solve time: 2.9632 seconds
+CEM solve time: 2.9277 seconds
+CEM solve time: 2.9603 seconds
+CEM solve time: 2.8621 seconds
+CEM solve time: 2.8437 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42459, "success": false, "steps": 80, "final_dist_cm": 5.836897003195314, "min_dist_cm": 5.836896995328584, "start_dist_cm": 16.863684434807137, "solves": 10, "solve_sec": 2.867311787605286, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9123 seconds
+CEM solve time: 2.9593 seconds
+CEM solve time: 2.9287 seconds
+CEM solve time: 2.7614 seconds
+CEM solve time: 2.9353 seconds
+CEM solve time: 2.9482 seconds
+CEM solve time: 2.9382 seconds
+CEM solve time: 2.9482 seconds
+CEM solve time: 2.9378 seconds
+CEM solve time: 2.9467 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46237, "success": false, "steps": 80, "final_dist_cm": 10.96493923988184, "min_dist_cm": 10.96493923988184, "start_dist_cm": 10.964939248079602, "solves": 10, "solve_sec": 2.9217491865158083, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.8525 seconds
+CEM solve time: 2.7663 seconds
+CEM solve time: 2.9387 seconds
+CEM solve time: 2.7533 seconds
+CEM solve time: 2.9389 seconds
+CEM solve time: 2.9498 seconds
+CEM solve time: 2.9400 seconds
+CEM solve time: 2.9464 seconds
+CEM solve time: 2.7547 seconds
+CEM solve time: 2.9490 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45439, "success": false, "steps": 80, "final_dist_cm": 31.40414119842746, "min_dist_cm": 31.397958411825467, "start_dist_cm": 31.560656986894013, "solves": 10, "solve_sec": 2.8791170358657836, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9390 seconds
+CEM solve time: 2.9384 seconds
+CEM solve time: 2.9480 seconds
+CEM solve time: 2.7452 seconds
+CEM solve time: 2.9474 seconds
+CEM solve time: 2.9348 seconds
+CEM solve time: 2.9466 seconds
+CEM solve time: 2.9349 seconds
+CEM solve time: 2.9459 seconds
+CEM solve time: 2.7408 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40835, "success": false, "steps": 80, "final_dist_cm": 31.760490658620892, "min_dist_cm": 31.76049065558349, "start_dist_cm": 30.00965607504431, "solves": 10, "solve_sec": 2.9022324323654174, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9069 seconds
+CEM solve time: 2.7960 seconds
+CEM solve time: 2.9614 seconds
+CEM solve time: 2.7227 seconds
+CEM solve time: 2.9606 seconds
+CEM solve time: 2.9252 seconds
+CEM solve time: 2.9576 seconds
+CEM solve time: 2.7424 seconds
+CEM solve time: 2.9605 seconds
+CEM solve time: 2.9244 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45032, "success": false, "steps": 80, "final_dist_cm": 12.530998788542755, "min_dist_cm": 12.530998788542755, "start_dist_cm": 12.530998793150012, "solves": 10, "solve_sec": 2.8859153270721434, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 2.9395 seconds
+CEM solve time: 2.9320 seconds
+CEM solve time: 2.9502 seconds
+CEM solve time: 2.7394 seconds
+CEM solve time: 2.9462 seconds
+CEM solve time: 2.9454 seconds
+CEM solve time: 2.9357 seconds
+CEM solve time: 2.9473 seconds
+CEM solve time: 2.9152 seconds
+CEM solve time: 2.8004 seconds
+{"model": "chunk_k4_s1", "k": 4, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41615, "success": false, "steps": 80, "final_dist_cm": 23.74449620587076, "min_dist_cm": 23.744496202122857, "start_dist_cm": 23.744496205767764, "solves": 10, "solve_sec": 2.9052648544311523, "calls_per_solve": 100, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4814 seconds
+CEM solve time: 1.5002 seconds
+CEM solve time: 1.4884 seconds
+CEM solve time: 1.4652 seconds
+CEM solve time: 1.3061 seconds
+CEM solve time: 1.4989 seconds
+CEM solve time: 1.4900 seconds
+CEM solve time: 1.4672 seconds
+CEM solve time: 1.4896 seconds
+CEM solve time: 1.5026 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41422, "success": false, "steps": 80, "final_dist_cm": 22.034005079256342, "min_dist_cm": 22.013877620240375, "start_dist_cm": 22.04621071304539, "solves": 10, "solve_sec": 1.46911678314209, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.3741 seconds
+CEM solve time: 1.3969 seconds
+CEM solve time: 1.5000 seconds
+CEM solve time: 1.4923 seconds
+CEM solve time: 1.4763 seconds
+CEM solve time: 1.4782 seconds
+CEM solve time: 1.5033 seconds
+CEM solve time: 1.4750 seconds
+CEM solve time: 1.4892 seconds
+CEM solve time: 1.4867 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42636, "success": false, "steps": 80, "final_dist_cm": 22.186561162441947, "min_dist_cm": 21.95352605321516, "start_dist_cm": 29.35531436873257, "solves": 10, "solve_sec": 1.4673432111740112, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4809 seconds
+CEM solve time: 1.4754 seconds
+CEM solve time: 1.4342 seconds
+CEM solve time: 1.3672 seconds
+CEM solve time: 1.4853 seconds
+CEM solve time: 1.4779 seconds
+CEM solve time: 1.4860 seconds
+CEM solve time: 1.4886 seconds
+CEM solve time: 1.4878 seconds
+CEM solve time: 1.4716 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49251, "success": false, "steps": 80, "final_dist_cm": 11.707148124407022, "min_dist_cm": 11.707148124407022, "start_dist_cm": 11.707148126243062, "solves": 10, "solve_sec": 1.4656471252441405, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4811 seconds
+CEM solve time: 1.4867 seconds
+CEM solve time: 1.2935 seconds
+CEM solve time: 1.4896 seconds
+CEM solve time: 1.4881 seconds
+CEM solve time: 1.4349 seconds
+CEM solve time: 1.3387 seconds
+CEM solve time: 1.5032 seconds
+CEM solve time: 1.4883 seconds
+CEM solve time: 1.5007 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45832, "success": false, "steps": 80, "final_dist_cm": 28.18355668308483, "min_dist_cm": 28.183556676712907, "start_dist_cm": 28.183556939681047, "solves": 10, "solve_sec": 1.450613522529602, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4863 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 49275, "success": true, "steps": 4, "final_dist_cm": 1.3784759976918102, "min_dist_cm": 1.3784759976918102, "start_dist_cm": 17.991659879051266, "solves": 1, "solve_sec": 1.4865093231201172, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.3312 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47865, "success": true, "steps": 3, "final_dist_cm": 3.4379444016704293, "min_dist_cm": 3.4379444016704293, "start_dist_cm": 13.96768248389356, "solves": 1, "solve_sec": 1.331364631652832, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4413 seconds
+CEM solve time: 1.5003 seconds
+CEM solve time: 1.4871 seconds
+CEM solve time: 1.5013 seconds
+CEM solve time: 1.2848 seconds
+CEM solve time: 1.4852 seconds
+CEM solve time: 1.4868 seconds
+CEM solve time: 1.4891 seconds
+CEM solve time: 1.4628 seconds
+CEM solve time: 1.5016 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 50055, "success": false, "steps": 80, "final_dist_cm": 11.337236132105852, "min_dist_cm": 11.337236132105852, "start_dist_cm": 11.3372361387041, "solves": 10, "solve_sec": 1.4641524791717528, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4918 seconds
+CEM solve time: 1.4652 seconds
+CEM solve time: 1.4883 seconds
+CEM solve time: 1.4888 seconds
+CEM solve time: 1.4861 seconds
+CEM solve time: 1.4661 seconds
+CEM solve time: 1.4983 seconds
+CEM solve time: 1.4032 seconds
+CEM solve time: 1.3762 seconds
+CEM solve time: 1.4905 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48071, "success": false, "steps": 80, "final_dist_cm": 14.28970521157471, "min_dist_cm": 12.691228806708917, "start_dist_cm": 12.071417348432407, "solves": 10, "solve_sec": 1.465592908859253, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4912 seconds
+CEM solve time: 1.4763 seconds
+CEM solve time: 1.4770 seconds
+CEM solve time: 1.4856 seconds
+CEM solve time: 1.5016 seconds
+CEM solve time: 1.4349 seconds
+CEM solve time: 1.3412 seconds
+CEM solve time: 1.4906 seconds
+CEM solve time: 1.4999 seconds
+CEM solve time: 1.3421 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40419, "success": false, "steps": 80, "final_dist_cm": 32.8885430223702, "min_dist_cm": 32.88854302059334, "start_dist_cm": 33.21646383436061, "solves": 10, "solve_sec": 1.4541812181472777, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4792 seconds
+CEM solve time: 1.4999 seconds
+CEM solve time: 1.4884 seconds
+CEM solve time: 1.4646 seconds
+CEM solve time: 1.4916 seconds
+CEM solve time: 1.5021 seconds
+CEM solve time: 1.2991 seconds
+CEM solve time: 1.4620 seconds
+CEM solve time: 1.4894 seconds
+CEM solve time: 1.5028 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44628, "success": false, "steps": 80, "final_dist_cm": 14.292249117737244, "min_dist_cm": 14.292249117737244, "start_dist_cm": 14.292249126951923, "solves": 10, "solve_sec": 1.4680520296096802, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.3304 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41835, "success": true, "steps": 4, "final_dist_cm": 3.3305385381461625, "min_dist_cm": 3.3305385381461625, "start_dist_cm": 17.922930825966745, "solves": 1, "solve_sec": 1.3305299282073975, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4786 seconds
+CEM solve time: 1.4995 seconds
+CEM solve time: 1.4641 seconds
+CEM solve time: 1.4871 seconds
+CEM solve time: 1.4873 seconds
+CEM solve time: 1.5016 seconds
+CEM solve time: 1.4642 seconds
+CEM solve time: 1.4907 seconds
+CEM solve time: 1.4919 seconds
+CEM solve time: 1.4996 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45432, "success": false, "steps": 80, "final_dist_cm": 31.56066025324325, "min_dist_cm": 31.56066025018747, "start_dist_cm": 31.560660250187446, "solves": 10, "solve_sec": 1.486603021621704, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4812 seconds
+CEM solve time: 1.4889 seconds
+CEM solve time: 1.5041 seconds
+CEM solve time: 1.2812 seconds
+CEM solve time: 1.4851 seconds
+CEM solve time: 1.4909 seconds
+CEM solve time: 1.4994 seconds
+CEM solve time: 1.4633 seconds
+CEM solve time: 1.4873 seconds
+CEM solve time: 1.4854 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 44464, "success": false, "steps": 80, "final_dist_cm": 26.587973094001438, "min_dist_cm": 26.584914890673033, "start_dist_cm": 41.08187197820602, "solves": 10, "solve_sec": 1.466837763786316, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.3144 seconds
+CEM solve time: 1.4521 seconds
+CEM solve time: 1.5034 seconds
+CEM solve time: 1.4889 seconds
+CEM solve time: 1.2864 seconds
+CEM solve time: 1.4904 seconds
+CEM solve time: 1.4895 seconds
+CEM solve time: 1.5008 seconds
+CEM solve time: 1.4512 seconds
+CEM solve time: 1.5013 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45872, "success": false, "steps": 80, "final_dist_cm": 15.444483728964297, "min_dist_cm": 12.936095576533937, "start_dist_cm": 20.88597236694534, "solves": 10, "solve_sec": 1.4479798316955566, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4812 seconds
+CEM solve time: 1.4764 seconds
+CEM solve time: 1.2810 seconds
+CEM solve time: 1.5009 seconds
+CEM solve time: 1.4893 seconds
+CEM solve time: 1.4375 seconds
+CEM solve time: 1.3419 seconds
+CEM solve time: 1.4998 seconds
+CEM solve time: 1.4898 seconds
+CEM solve time: 1.4766 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45868, "success": false, "steps": 80, "final_dist_cm": 11.015700011278165, "min_dist_cm": 9.5647995010166, "start_dist_cm": 22.516583573607242, "solves": 10, "solve_sec": 1.447571873664856, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4939 seconds
+CEM solve time: 1.4875 seconds
+CEM solve time: 1.4785 seconds
+CEM solve time: 1.4766 seconds
+CEM solve time: 1.5013 seconds
+CEM solve time: 1.4894 seconds
+CEM solve time: 1.4721 seconds
+CEM solve time: 1.4813 seconds
+CEM solve time: 1.4975 seconds
+CEM solve time: 1.4882 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46236, "success": false, "steps": 80, "final_dist_cm": 10.964939254487454, "min_dist_cm": 10.964939248160679, "start_dist_cm": 10.964939248160679, "solves": 10, "solve_sec": 1.4867674350738525, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4070 seconds
+CEM solve time: 1.2112 seconds
+CEM solve time: 1.2059 seconds
+CEM solve time: 1.4270 seconds
+CEM solve time: 1.4796 seconds
+CEM solve time: 1.4868 seconds
+CEM solve time: 1.4877 seconds
+CEM solve time: 1.2986 seconds
+CEM solve time: 1.4722 seconds
+CEM solve time: 1.4889 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 48856, "success": false, "steps": 80, "final_dist_cm": 29.565144204697518, "min_dist_cm": 29.565144199195746, "start_dist_cm": 29.56514420390323, "solves": 10, "solve_sec": 1.3966200828552247, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.3218 seconds
+CEM solve time: 1.4374 seconds
+CEM solve time: 1.3392 seconds
+CEM solve time: 1.4695 seconds
+CEM solve time: 1.4805 seconds
+CEM solve time: 1.4682 seconds
+CEM solve time: 1.4917 seconds
+CEM solve time: 1.4921 seconds
+CEM solve time: 1.4556 seconds
+CEM solve time: 1.4925 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40818, "success": false, "steps": 80, "final_dist_cm": 10.366450029947053, "min_dist_cm": 10.366450020289864, "start_dist_cm": 10.366450020173627, "solves": 10, "solve_sec": 1.44498610496521, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4806 seconds
+CEM solve time: 1.4949 seconds
+CEM solve time: 1.0910 seconds
+CEM solve time: 1.4587 seconds
+CEM solve time: 1.4918 seconds
+CEM solve time: 1.4628 seconds
+CEM solve time: 1.4800 seconds
+CEM solve time: 1.4898 seconds
+CEM solve time: 1.4899 seconds
+CEM solve time: 1.4656 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42444, "success": false, "steps": 80, "final_dist_cm": 27.758886679966448, "min_dist_cm": 27.73190502220894, "start_dist_cm": 31.687323110311084, "solves": 10, "solve_sec": 1.4406527996063232, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4824 seconds
+CEM solve time: 1.4929 seconds
+CEM solve time: 1.3141 seconds
+CEM solve time: 1.4571 seconds
+CEM solve time: 1.4875 seconds
+CEM solve time: 1.4891 seconds
+CEM solve time: 1.4675 seconds
+CEM solve time: 1.4762 seconds
+CEM solve time: 1.4919 seconds
+CEM solve time: 1.4892 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43020, "success": false, "steps": 80, "final_dist_cm": 31.54454607193668, "min_dist_cm": 31.54454607193668, "start_dist_cm": 31.544546073633807, "solves": 10, "solve_sec": 1.4649407863616943, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4716 seconds
+CEM solve time: 1.4866 seconds
+CEM solve time: 1.3352 seconds
+CEM solve time: 1.3939 seconds
+CEM solve time: 1.1033 seconds
+CEM solve time: 1.4945 seconds
+CEM solve time: 1.4884 seconds
+CEM solve time: 1.3461 seconds
+CEM solve time: 1.2498 seconds
+CEM solve time: 1.4921 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47668, "success": false, "steps": 80, "final_dist_cm": 29.899788773264696, "min_dist_cm": 29.63970712519436, "start_dist_cm": 36.38667399172465, "solves": 10, "solve_sec": 1.3862847566604615, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4815 seconds
+CEM solve time: 1.4668 seconds
+CEM solve time: 1.4751 seconds
+CEM solve time: 1.4921 seconds
+CEM solve time: 1.2982 seconds
+CEM solve time: 1.4694 seconds
+CEM solve time: 1.4865 seconds
+CEM solve time: 1.4899 seconds
+CEM solve time: 1.4933 seconds
+CEM solve time: 1.2674 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43443, "success": false, "steps": 80, "final_dist_cm": 14.058285211606197, "min_dist_cm": 14.052593557358383, "start_dist_cm": 24.39821755844327, "solves": 10, "solve_sec": 1.4421444177627563, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4844 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 47093, "success": true, "steps": 4, "final_dist_cm": 2.202465188848987, "min_dist_cm": 2.202465188848987, "start_dist_cm": 17.549558782434644, "solves": 1, "solve_sec": 1.484518051147461, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4639 seconds
+CEM solve time: 1.4711 seconds
+CEM solve time: 1.3278 seconds
+CEM solve time: 1.4772 seconds
+CEM solve time: 1.4735 seconds
+CEM solve time: 1.4637 seconds
+CEM solve time: 1.4919 seconds
+CEM solve time: 1.4870 seconds
+CEM solve time: 1.4698 seconds
+CEM solve time: 1.4841 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 43029, "success": false, "steps": 80, "final_dist_cm": 30.87474910662084, "min_dist_cm": 30.87474910466993, "start_dist_cm": 30.874749111996568, "solves": 10, "solve_sec": 1.4611358642578125, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4800 seconds
+CEM solve time: 1.4733 seconds
+CEM solve time: 1.3152 seconds
+CEM solve time: 1.4765 seconds
+CEM solve time: 1.4892 seconds
+CEM solve time: 1.4749 seconds
+CEM solve time: 1.4732 seconds
+CEM solve time: 1.4875 seconds
+CEM solve time: 1.4926 seconds
+CEM solve time: 1.4497 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 42459, "success": false, "steps": 80, "final_dist_cm": 4.268763628191157, "min_dist_cm": 4.268763622823752, "start_dist_cm": 16.863684434807137, "solves": 10, "solve_sec": 1.4613577842712402, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4821 seconds
+CEM solve time: 1.4875 seconds
+CEM solve time: 1.1222 seconds
+CEM solve time: 1.1429 seconds
+CEM solve time: 1.4916 seconds
+CEM solve time: 1.4916 seconds
+CEM solve time: 1.4762 seconds
+CEM solve time: 1.2876 seconds
+CEM solve time: 1.4912 seconds
+CEM solve time: 1.4897 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 46237, "success": false, "steps": 80, "final_dist_cm": 10.964939256547945, "min_dist_cm": 10.964939248085354, "start_dist_cm": 10.964939248079602, "solves": 10, "solve_sec": 1.396399235725403, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4498 seconds
+CEM solve time: 1.4885 seconds
+CEM solve time: 1.3805 seconds
+CEM solve time: 1.3827 seconds
+CEM solve time: 1.3182 seconds
+CEM solve time: 1.4899 seconds
+CEM solve time: 1.4901 seconds
+CEM solve time: 1.4933 seconds
+CEM solve time: 1.4521 seconds
+CEM solve time: 1.4937 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45439, "success": false, "steps": 80, "final_dist_cm": 31.560656978691277, "min_dist_cm": 31.560656978691277, "start_dist_cm": 31.560656986894013, "solves": 10, "solve_sec": 1.4440306663513183, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4807 seconds
+CEM solve time: 1.4559 seconds
+CEM solve time: 1.3636 seconds
+CEM solve time: 1.4528 seconds
+CEM solve time: 1.4918 seconds
+CEM solve time: 1.4558 seconds
+CEM solve time: 1.4940 seconds
+CEM solve time: 1.4912 seconds
+CEM solve time: 1.4922 seconds
+CEM solve time: 1.4574 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 40835, "success": false, "steps": 80, "final_dist_cm": 31.760488774811613, "min_dist_cm": 31.760488771691996, "start_dist_cm": 30.00965607504431, "solves": 10, "solve_sec": 1.463667345046997, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4813 seconds
+CEM solve time: 1.4917 seconds
+CEM solve time: 1.3230 seconds
+CEM solve time: 1.4513 seconds
+CEM solve time: 1.4906 seconds
+CEM solve time: 1.4926 seconds
+CEM solve time: 1.4572 seconds
+CEM solve time: 1.4905 seconds
+CEM solve time: 1.4947 seconds
+CEM solve time: 1.4837 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 45032, "success": false, "steps": 80, "final_dist_cm": 12.530998788181277, "min_dist_cm": 12.530998788181277, "start_dist_cm": 12.530998793150012, "solves": 10, "solve_sec": 1.465800166130066, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}
+CEM solve time: 1.4444 seconds
+CEM solve time: 1.4909 seconds
+CEM solve time: 1.3175 seconds
+CEM solve time: 1.2836 seconds
+CEM solve time: 1.4851 seconds
+CEM solve time: 1.4907 seconds
+CEM solve time: 1.4765 seconds
+CEM solve time: 1.4645 seconds
+CEM solve time: 1.4896 seconds
+CEM solve time: 1.4892 seconds
+{"model": "chunk_k8_s1", "k": 8, "arch": "chunk", "variant": "", "seed": 1, "cost": "probe_cube", "offset": 40, "t0": 41615, "success": false, "steps": 80, "final_dist_cm": 23.744496197933252, "min_dist_cm": 23.744496197933252, "start_dist_cm": 23.744496205767764, "solves": 10, "solve_sec": 1.4433386325836182, "calls_per_solve": 50, "horizon": 40, "samples": 100, "iters": 10, "aligned": true}

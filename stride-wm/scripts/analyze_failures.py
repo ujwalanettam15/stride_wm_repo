@@ -92,12 +92,24 @@ if Path(args.openloop).exists():
 # ------------------------------------------------------------------ planning
 if Path(args.plan).exists():
     pl = pd.DataFrame([json.loads(x) for x in open(args.plan)])
-    for col, default in (('variant', ''), ('min_dist_cm', np.nan)):
+    for col, default in (('variant', ''), ('cost', ''), ('min_dist_cm', np.nan)):
         if col not in pl:
             pl[col] = default
-    pl['variant'] = pl['variant'].fillna('')
-    pl['model_label'] = pl.apply(lambda r: {'replay': 'expert replay', 'random': 'random actions'}.get(r.arch)
-                                 or f"{label(r)}{r.variant}", axis=1)
+    pl['variant'], pl['cost'] = pl['variant'].fillna(''), pl['cost'].fillna('')
+    NULL = {'replay': 'expert replay', 'random': 'random actions'}
+    planners = pl[~pl.arch.isin(list(NULL))]  # most common search budget = default; others are labelled
+    base = (planners[['samples', 'iters']].value_counts().idxmax()
+            if len(planners) and {'samples', 'iters'} <= set(pl) else None)
+
+    def plan_label(r):
+        if r.arch in NULL:
+            return NULL[r.arch]
+        name = 'simulator as model' if r.arch == 'oracle' else f'{label(r)}{r.variant}'
+        budget = (f' · {int(r.samples)}x{int(r.iters)} search'
+                  if base is not None and (r.samples, r.iters) != tuple(base) else '')
+        return name + (f' · {r.cost} cost' if r.cost not in ('', 'latent') or r.arch == 'oracle' else '') + budget
+
+    pl['model_label'] = pl.apply(plan_label, axis=1)
     pl['progress'] = pl.start_dist_cm - pl.final_dist_cm
     pl['bin'] = pd.cut(pl.start_dist_cm, [0, 8, 15, 1e9], labels=['<8 cm', '8-15 cm', '>=15 cm'])
 

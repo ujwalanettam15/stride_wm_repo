@@ -8,7 +8,7 @@ import torch
 from torch import nn
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from stride.cost import LatentGoalCost
+from stride.cost import GoalScore, LatentGoalCost, load_score, nnls
 from stride.stats import cluster_mean_se, wilson
 
 
@@ -70,3 +70,87 @@ def test_wilson_interval_is_sane_at_small_n():
     assert 0.0 < lo < 0.2 < hi < 0.7
     assert wilson(0, 5)[0] == pytest.approx(0.0, abs=1e-9) and wilson(5, 5)[1] == pytest.approx(1.0, abs=1e-9)
     assert np.isnan(wilson(0, 0)[0])
+
+
+# ---- planning-cost candidates (stride/cost.py, fit by scripts/fit_cost.py)
+def test_latent_score_is_the_original_mse():
+    z, g = torch.randn(3, 4, 6), torch.randn(3, 4, 6)
+    assert torch.allclose(GoalScore('latent')(z, g), ((z - g) ** 2).mean((1, 2)))
+
+
+def test_patch_weighted_score_only_sees_weighted_patches():
+    w = torch.tensor([1.0, 0.0, 0.0, 0.0])
+    s = GoalScore('patchw', {'patch_w': w})
+    z, g = torch.zeros(2, 4, 6), torch.zeros(2, 4, 6)
+    g[:, 1:] = 5.0  # differences on unweighted patches only
+    assert torch.allclose(s(z, g), torch.zeros(2))
+    g[:, 0] = 2.0
+    assert torch.allclose(s(z, g), torch.full((2,), 4.0))
+    with pytest.raises(ValueError):  # weights fit on another patch grid
+        s(torch.zeros(2, 16, 6), torch.zeros(2, 16, 6))
+
+
+def _probe_params(D=6, grid=2):
+    # 2x2 grid of D-dim patches -> 4*D features; the 'probe' reads cube xyz from features 0-2 and EE xyz from 3-5
+    W = torch.zeros(grid * grid * D, 11)
+    W[0, 0] = W[1, 1] = W[2, 2] = 1.0
+    W[3, 5] = W[4, 6] = W[5, 7] = 1.0
+    return {'probe': {'mx': torch.zeros(grid * grid * D), 'my': torch.zeros(11), 'W': W, 'grid': grid}}
+
+
+def test_probe_scores_compare_decoded_cube_and_end_effector_positions():
+    z, g = torch.zeros(1, 4, 6), torch.zeros(1, 4, 6)
+    g[0, 0, :3] = torch.tensor([3.0, 0.0, 0.0])  # decoded cube 3 away
+    g[0, 0, 3:6] = torch.tensor([0.0, 4.0, 0.0])  # decoded end effector 4 away
+    params = _probe_params()
+    assert torch.allclose(GoalScore('probe_cube', params)(z, g), torch.tensor([9.0]))
+    assert torch.allclose(GoalScore('probe_cube_ee', params)(z, g), torch.tensor([25.0]))
+
+
+def test_refit_probe_file_is_never_mixed_up_with_the_expert_only_one(tmp_path):
+    torch.save(dict(chosen='probe_cube', **_probe_params()), tmp_path / 'cost.pt')
+    torch.save(dict(chosen='probe_cube_rand', robust=True, **_probe_params()), tmp_path / 'cost_rand.pt')
+    assert load_score('probe_cube_rand', tmp_path / 'cost_rand.pt').kind == 'probe_cube_rand'
+    assert load_score('best', tmp_path / 'cost_rand.pt').kind == 'probe_cube_rand'
+    for kind, f in (('probe_cube_rand', 'cost.pt'), ('probe_cube', 'cost_rand.pt')):
+        with pytest.raises(ValueError, match='probe but cost'):
+            load_score(kind, tmp_path / f)
+
+
+def test_mlp_probe_matches_its_layers():
+    g = torch.Generator().manual_seed(0)
+    D, grid = 6, 2
+    layers = [(torch.randn(grid * grid * D, 5, generator=g), torch.randn(5, generator=g)),
+              (torch.randn(5, 11, generator=g), torch.randn(11, generator=g))]
+    pr = dict(mx=torch.randn(grid * grid * D, generator=g), sx=torch.rand(grid * grid * D, generator=g) + 0.5,
+              my=torch.randn(11, generator=g), sy=torch.rand(11, generator=g) + 0.5, layers=layers, grid=grid)
+    s = GoalScore('probe_cube_rand', dict(probe=pr))
+    z = torch.randn(3, 4, D, generator=g)
+    h = torch.relu(((z.reshape(3, -1) - pr['mx']) / pr['sx']) @ layers[0][0] + layers[0][1])
+    y = (h @ layers[1][0] + layers[1][1]) * pr['sy'] + pr['my']
+    assert torch.allclose(s.probe(z), y, atol=1e-5)
+    assert torch.allclose(s(z, z.flip(0)), ((y[:, :3] - y.flip(0)[:, :3]) ** 2).sum(1), atol=1e-4)
+
+
+def test_cost_passes_its_score_through(tmp_path):
+    params = dict(patch_w=torch.tensor([0.0, 0.0, 0.0, 1.0]), chosen='patchw', **_probe_params(D=3))
+    torch.save(params, tmp_path / 'cost.pt')
+    score = load_score('best', tmp_path / 'cost.pt')
+    assert score.kind == 'patchw'
+    model = Spy(k=2)
+    cost = LatentGoalCost(model, np.zeros(5, np.float32), np.ones(5, np.float32), score=score)
+    info = {'z': torch.zeros(1, 2, 4, 3), 'goal': torch.zeros(1, 2, 4, 3)}
+    c = cost.get_cost(info, torch.zeros(1, 2, 3, 10))  # Spy's last latent is 3.0 everywhere
+    assert torch.allclose(c, torch.full((1, 2), 9.0))
+
+
+def test_nnls_recovers_non_negative_weights():
+    g = torch.Generator().manual_seed(0)
+    F = torch.rand(2000, 8, generator=g, dtype=torch.float64)
+    w_true = torch.tensor([0.0, 2.0, 0.0, 1.0, 0.5, 0.0, 0.0, 3.0], dtype=torch.float64)
+    y = F @ w_true + 7.0  # the intercept is free
+    w = nnls(F, y)
+    assert (w >= 0).all()
+    assert torch.allclose(w, w_true, atol=1e-3)
+    w = nnls(F, -F[:, 0])  # best unconstrained weight is negative: clamped to zero
+    assert w[0] == 0 and (w >= 0).all()

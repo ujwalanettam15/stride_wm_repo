@@ -22,7 +22,7 @@ import torch.nn.functional as F
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from stride.data import Cache
-from stride.model import StrideWM, default_device, variant_tag
+from stride.model import StrideWM, default_device, enable_tf32, variant_tag
 
 p = argparse.ArgumentParser()
 p.add_argument('--cache', default='data/cache')
@@ -44,8 +44,10 @@ p.add_argument('--dinowm-emb', type=int, default=10, help='DINO-WM action-embedd
 p.add_argument('--emb-dim', type=int, default=64, help='chunk-encoder output size (shared by all k)')
 p.add_argument('--eval-every', type=int, default=500)
 p.add_argument('--out', default='runs')
+p.add_argument('--tf32', action='store_true', help='TF32 matmuls on CUDA (A100: ~2x faster); recorded in cfg')
 p.add_argument('--device', default=default_device())
 args = p.parse_args()
+enable_tf32(args.tf32)
 
 torch.manual_seed(args.seed)
 rng = np.random.default_rng(args.seed)
@@ -113,5 +115,9 @@ for step in range(1, args.steps + 1):
         run, n_run = 0.0, 0
 
 Path(args.out).mkdir(parents=True, exist_ok=True)
+# Write to a temporary name, then rename: a job killed mid-save leaves only the .tmp file, never a truncated
+# checkpoint that the run scripts would skip as finished on resume.
+ckpt = Path(args.out) / f'{name}.pt'
 torch.save(dict(model_kw=model_kw, state=model.state_dict(), act_mean=mu, act_std=sd, cfg=vars(args),
-                log=log, chunk_nn=chunk_nn), Path(args.out) / f'{name}.pt')
+                log=log, chunk_nn=chunk_nn), ckpt.with_suffix('.pt.tmp'))
+ckpt.with_suffix('.pt.tmp').replace(ckpt)

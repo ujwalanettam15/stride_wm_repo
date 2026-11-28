@@ -197,12 +197,24 @@ fig.savefig(out / 'fig_e1_phase.png', dpi=160)
 # ---- E2/E3 planning
 if Path(args.plan).exists():
     pl = pd.DataFrame([json.loads(x) for x in open(args.plan)])
-    if 'variant' not in pl:
-        pl['variant'] = ''
-    pl['variant'] = pl['variant'].fillna('')
+    for col in ('variant', 'cost'):  # older logs predate ablation variants / --cost (latent)
+        pl[col] = pl[col].fillna('') if col in pl else ''
     NULL = {'replay': 'expert replay (pipeline check)', 'random': 'random actions (null planner)'}
-    pl['label'] = pl.apply(lambda r: NULL.get(r.arch) or
-                           f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}{r.variant}", axis=1)
+    # the most common search budget is the default; others are named in the label (e.g. 300x30 search)
+    planners = pl[~pl.arch.isin(list(NULL))]
+    base = (planners[['samples', 'iters']].value_counts().idxmax()
+            if len(planners) and {'samples', 'iters'} <= set(pl) else None)
+
+    def plan_label(r):
+        if r.arch in NULL:
+            return NULL[r.arch]
+        name = ('simulator as model (perfect predictions)' if r.arch == 'oracle' else
+                f"{'DINO-WM' if r.arch == 'dinowm' else 'chunk'} k={r.k}{r.variant}")
+        budget = (f' · {int(r.samples)}x{int(r.iters)} search'
+                  if base is not None and (r.samples, r.iters) != tuple(base) else '')
+        return name + (f' · {r.cost} cost' if r.cost not in ('', 'latent') or r.arch == 'oracle' else '') + budget
+
+    pl['label'] = pl.apply(plan_label, axis=1)
     pl['progress'] = pl.start_dist_cm - pl.final_dist_cm
     md.append('\n## E2 · planning success by goal offset (env steps): rate [95% Wilson interval] (pairs)\n')
     md.append('A rate only means something next to the random-action row and its interval; with n < 20 '
@@ -223,6 +235,8 @@ if Path(args.plan).exists():
         md.append(f'| {lab} | {gg.start_dist_cm.mean():.1f} | {gg.final_dist_cm.mean():.1f} | {mn.mean():.1f} | '
                   f'{gg.progress.mean():+.1f} | {(gg.start_dist_cm - mn).mean():+.1f} | {len(gg)} |\n')
     md.append('\n## E3 · cost per plan (same CEM budget, horizon and replanning for all)\n')
+    md.append('For the simulator planner, calls = simulator steps per candidate path.\n\n'
+              if (pl.arch == 'oracle').any() else '')
     md.append('| model | model calls / plan | sec / plan |\n|---|---|---|\n')
     for lab, gg in pl[~pl.arch.isin(['replay', 'random'])].groupby('label', sort=False):
         md.append(f'| {lab} | {int(gg.calls_per_solve.iloc[0])} | {gg.solve_sec.mean():.2f} |\n')
